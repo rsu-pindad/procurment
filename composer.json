@@ -10,6 +10,8 @@
         "laravel/tinker": "^2.9",
         "livewire/livewire": "^3.4",
         "livewire/volt": "^1.7.0",
+        "owen-it/laravel-auditing": "^14.0",
+        "power-components/livewire-powergrid": "^6.4",
         "santigarcor/laratrust": "^8.5"
     },
     "require-dev": {
