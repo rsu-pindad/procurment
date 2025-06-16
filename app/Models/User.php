@@ -46,4 +46,14 @@ class User extends Authenticatable implements LaratrustUser
             'password' => 'hashed',
         ];
     }
+
+    public function unit()
+    {
+        return $this->belongsTo(\App\Models\Admin\Unit::class);
+    }
+
+    public function ajuan()
+    {
+        return $this->hasMany(\App\Models\Ajuan::class);
+    }
 }
