@@ -41,12 +41,11 @@ new class extends Component {
                 </div>
             </div>
 
-            <div class="hidden sm:flex sm:items-center sm:ms-6">
-                <livewire:notification-dropdown />
-            </div>
-
             <!-- Settings Dropdown -->
-            <div class="hidden sm:flex sm:items-center sm:ms-6">
+            <div class="hidden sm:flex sm:items-center sm:ms-6 space-x-1">
+
+                <livewire:notification-dropdown />
+
                 <x-dropdown align="right" width="48">
                     <x-slot name="trigger">
                         <button
