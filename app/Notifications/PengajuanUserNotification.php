@@ -39,7 +39,8 @@ class PengajuanUserNotification extends Notification implements ShouldQueue
         $data = [
             'message' => $pesan,
             'ajuan_id' => $this->ajuan->id,
-            'unit_id' => $this->ajuan->unit_id,
+            'unit_id' => $this->ajuan->units_id,
+            'unit_name' => $this->ajuan->unit->nama_unit,
             'created_at' => now(),
         ];
 
