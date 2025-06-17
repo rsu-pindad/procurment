@@ -18,4 +18,9 @@ class Unit extends Model implements Auditable
     {
         return $this->hasMany(\App\Models\User::class);
     }
+
+    public function ajuans()
+    {
+        return $this->hasMany(\App\Models\Ajuan::class);
+    }
 }

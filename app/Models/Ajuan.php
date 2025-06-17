@@ -28,4 +28,9 @@ class Ajuan extends Model implements Auditable
     {
         return $this->belongsTo(\App\Models\User::class, 'users_id', 'id');
     }
+
+    public function unit() : BelongsTo
+    {
+        return $this->belongsTo(\App\Models\Admin\Unit::class, 'units_id', 'id');
+    }
 }

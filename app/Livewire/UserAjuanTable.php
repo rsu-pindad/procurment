@@ -31,7 +31,7 @@ final class UserAjuanTable extends PowerGridComponent
 
     public function datasource(): Builder
     {
-        return Ajuan::query()->where('users_id', auth()->id());
+        return Ajuan::query()->with('unit')->where('users_id', auth()->id());
     }
 
     public function relationSearch(): array
@@ -43,25 +43,24 @@ final class UserAjuanTable extends PowerGridComponent
     {
         return PowerGrid::fields()
             ->add('id')
-            ->add('units_id')
+            ->add('units_id', fn($model) => e($model->unit?->nama_unit))
             ->add('tanggal_ajuan_formatted', fn (Ajuan $model) => Carbon::parse($model->tanggal_ajuan)->format('d/m/Y'))
-            ->add('hps')
+            ->add('hps', fn (Ajuan $model) => number_format($model->hps, 2, ',', '.'))
             ->add('spesifikasi')
             ->add('file_rab')
             ->add('file_nota_dinas')
             ->add('file_analisa_kajian')
-            ->add('jenis_ajuan')
+            ->add('jenis_ajuan', fn(Ajuan $model) => \App\Enums\JenisAjuan::from($model->jenis_ajuan)->labels())
             ->add('tanggal_update_terakhir_formatted', fn (Ajuan $model) => Carbon::parse($model->tanggal_update_terakhir)->format('d/m/Y H:i:s'))
-            ->add('status_ajuans_id')
-            ->add('users_id')
-            ->add('created_at');
+            ->add('status_ajuans_id');
     }
 
     public function columns(): array
     {
         return [
-            Column::make('Id', 'id'),
-            Column::make('Units id', 'units_id'),
+            Column::make('No', 'id')
+            ->index(),
+            Column::make('Unit', 'units_id'),
             Column::make('Tanggal ajuan', 'tanggal_ajuan_formatted', 'tanggal_ajuan')
                 ->sortable(),
 
@@ -70,15 +69,15 @@ final class UserAjuanTable extends PowerGridComponent
                 ->sortable()
                 ->searchable(),
 
-            Column::make('File rab', 'file_rab')
+            Column::make('RAB', 'file_rab')
                 ->sortable()
                 ->searchable(),
 
-            Column::make('File nota dinas', 'file_nota_dinas')
+            Column::make('Nota Dinas', 'file_nota_dinas')
                 ->sortable()
                 ->searchable(),
 
-            Column::make('File analisa kajian', 'file_analisa_kajian')
+            Column::make('Analisa', 'file_analisa_kajian')
                 ->sortable()
                 ->searchable(),
 
@@ -89,16 +88,9 @@ final class UserAjuanTable extends PowerGridComponent
             Column::make('Tanggal update terakhir', 'tanggal_update_terakhir_formatted', 'tanggal_update_terakhir')
                 ->sortable(),
 
-            Column::make('Status ajuans id', 'status_ajuans_id'),
-            Column::make('Users id', 'users_id'),
-            Column::make('Created at', 'created_at_formatted', 'created_at')
-                ->sortable(),
+            Column::make('Status', 'status_ajuans_id'),
 
-            Column::make('Created at', 'created_at')
-                ->sortable()
-                ->searchable(),
-
-            Column::action('Action')
+            Column::action('#')
         ];
     }
 
@@ -113,14 +105,14 @@ final class UserAjuanTable extends PowerGridComponent
     #[\Livewire\Attributes\On('edit')]
     public function edit($rowId): void
     {
-        $this->js('alert('.$rowId.')');
+        $this->js('alert(' . $rowId . ')');
     }
 
     public function actions(Ajuan $row): array
     {
         return [
             Button::add('edit')
-                ->slot('Edit: '.$row->id)
+                ->slot('Edit: ' . $row->id)
                 ->id()
                 ->class('pg-btn-white dark:ring-pg-primary-600 dark:border-pg-primary-600 dark:hover:bg-pg-primary-700 dark:ring-offset-pg-primary-800 dark:text-pg-primary-300 dark:bg-pg-primary-700')
                 ->dispatch('edit', ['rowId' => $row->id])
