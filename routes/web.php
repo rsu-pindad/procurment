@@ -1,6 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Broadcast;
+
+Broadcast::routes(['middleware' => ['web', 'auth']]);
 
 // Route::view('/', 'welcome');
 Route::get('/', function () {
@@ -21,6 +24,8 @@ Route::middleware(['auth'])->group(function () {
         ->name('profile');
     Route::view('unit', 'unit')->name('unit');
     Route::view('ajuan', 'ajuan')->name('ajuan');
+
+    // Route::get('/notifikasi', \App\Livewire\Notifikasi::class)->name('notifikasi');
 });
 
 require __DIR__ . '/auth.php';
