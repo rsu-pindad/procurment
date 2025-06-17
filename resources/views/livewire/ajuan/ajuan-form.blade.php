@@ -5,6 +5,7 @@ use Illuminate\Validation\Rule;
 use App\Models\Ajuan;
 use Livewire\WithFileUploads;
 use App\Enums\JenisAjuan;
+use App\Notifications\PengajuanUserNotification;
 
 new class extends Component {
     use WithFileUploads;
@@ -16,6 +17,8 @@ new class extends Component {
     public $file_rab;
     public $file_nota_dinas;
     public $file_analisa_kajian;
+    public $units;
+    public ?int $unit = null;
     public ?string $jenis_ajuan = null;
 
     protected function rules()
@@ -56,6 +59,11 @@ new class extends Component {
         ];
     }
 
+    public function mount()
+    {
+        $this->units = \App\Models\Admin\Unit::all();
+    }
+
     public function updatedHps($value)
     {
         // $this->hps = preg_replace('/\D/', '', $value);
@@ -65,13 +73,13 @@ new class extends Component {
 
     public function store(): void
     {
-        $validated = $this->validate();
+        // $validated = $this->validate();
         $pathRab = $this->file_rab->store('rab');
         $pathNodin = $this->file_nota_dinas->store('nodin');
         $pathAnalisa = $this->file_analisa_kajian->store('analisa');
 
         $ajuan = new Ajuan();
-        $ajuan->units_id = auth()->user()->units_id ?? 1;
+        $ajuan->units_id = $this->unit;
         $ajuan->tanggal_ajuan = $this->tanggal_ajuan;
         $ajuan->hps = (int) $this->hps;
         $ajuan->spesifikasi = $this->spesifikasi;
@@ -84,7 +92,15 @@ new class extends Component {
         $ajuan->users_id = auth()->id();
         $ajuan->save();
 
-        $this->reset();
+        \App\Models\User::withRole('pengadaan')
+            ->get()
+            ->each(function ($pengadaan) use ($ajuan) {
+                $pengadaan->notify(new PengajuanUserNotification($ajuan));
+                // Siarkan event untuk realtime update
+                event(new \App\Events\NotificationReceived($pengadaan->notifications()->latest()->first(), $pengadaan->id));
+            });
+
+        // $this->reset();
         $this->dispatch('modal-stored', name: 'pengajuan');
     }
 }; ?>
@@ -114,9 +130,13 @@ new class extends Component {
                         <x-input-error class="mt-2" :messages="$errors->get('tanggal_ajuan')" />
                     </div>
                     <div>
-                        <x-input-label for="unit" :value="__('unit')" />
-                        <x-text-input class="mt-1 block w-full" id="unit" name="unit" type="text"
-                            value="{{ auth()->user()->unit?->nama_unit }}" readonly />
+                        <x-input-label for="unit" :value="__('Unit')" />
+                        <x-select-input id="unit" name="unit" wire:model.lazy="unit">
+                            <option value="">{{ __('Pilih Unit') }}</option>
+                            @foreach ($this->units as $unit)
+                                <option value="{{ $unit->id }}">{{ $unit->nama_unit }}</option>
+                            @endforeach
+                        </x-select-input>
                         <x-input-error class="mt-2" :messages="$errors->get('unit')" />
                     </div>
                     <div>
