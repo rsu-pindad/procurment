@@ -97,7 +97,7 @@ new class extends Component {
             ->each(function ($pengadaan) use ($ajuan) {
                 $pengadaan->notify(new PengajuanUserNotification($ajuan));
                 // Siarkan event untuk realtime update
-                event(new \App\Events\NotificationReceived($pengadaan->notifications()->latest()->first(), $pengadaan->id));
+                // event(new \App\Events\NotificationReceived($pengadaan->notifications()->latest()->first(), $pengadaan->id));
             });
 
         // $this->reset();
