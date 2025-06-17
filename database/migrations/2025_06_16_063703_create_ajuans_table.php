@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('ajuans', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('units_id')->constrained('units', 'id')->nullable();
+            $table->foreignId('units_id')->nullable()->constrained('units', 'id');
             $table->date('tanggal_ajuan')->nullable(true);
             $table->unsignedBigInteger('hps')->nullable(true)->default(0);
             $table->text('spesifikasi')->nullable(true);
@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('file_analisa_kajian')->nullable(true);
             $table->string('jenis_ajuan');
             $table->dateTime('tanggal_update_terakhir');
-            $table->foreignId('status_ajuans_id')->constrained('status_ajuans', 'id')->nullable(true);
+            $table->foreignId('status_ajuans_id')->nullable(true)->constrained('status_ajuans', 'id');
             $table->foreignId('users_id')->constrained('users', 'id');
             $table->timestamps();
         });
