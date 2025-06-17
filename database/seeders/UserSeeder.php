@@ -18,10 +18,27 @@ class UserSeeder extends Seeder
             ]
         );
         $admin->syncRoles(['admin']);
+        $pengadaan = User::firstOrCreate(
+            ['email' => 'pengadaan@example.com'],
+            [
+                'name' => 'Pengadaan User',
+                'password' => bcrypt('password'),
+            ]
+        );
+        $pengadaan->syncRoles(['pengadaan']);
+
+        $pegawai = User::firstOrCreate(
+            ['email' => 'pegawai@example.com'],
+            [
+                'name' => 'pegawai User',
+                'password' => bcrypt('password'),
+            ]
+        );
+        $pegawai->syncRoles(['pegawai']);
 
         // Hanya buat user random kalau bukan production
         if (!app()->environment('production')) {
-            $otherRoles = ['pengadaan', 'verifikator', 'monitoring', 'user'];
+            $otherRoles = ['pengadaan', 'verifikator', 'monitoring', 'pegawai'];
 
             User::factory(19)->create()->each(function ($user) use ($otherRoles) {
                 $role = $otherRoles[array_rand($otherRoles)];
