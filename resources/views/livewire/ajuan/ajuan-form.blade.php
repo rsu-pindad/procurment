@@ -66,32 +66,26 @@ new class extends Component {
     public function store(): void
     {
         $validated = $this->validate();
-        try {
-            $pathRab = $this->file_rab->store('rab');
-            $pathNodin = $this->file_nota_dinas->store('nodin');
-            $pathAnalisa = $this->file_analisa_kajian->store('analisa');
+        $pathRab = $this->file_rab->store('rab');
+        $pathNodin = $this->file_nota_dinas->store('nodin');
+        $pathAnalisa = $this->file_analisa_kajian->store('analisa');
 
-            $ajuan = new Ajuan();
-            $ajuan->units_id = auth()->user()->units_id ?? 1;
-            $ajuan->tanggal_ajuan = $this->tanggal_ajuan;
-            $ajuan->hps = (int) $this->hps;
-            $ajuan->spesifikasi = $this->spesifikasi;
-            $ajuan->file_rab = $pathRab;
-            $ajuan->file_nota_dinas = $pathNodin;
-            $ajuan->file_analisa_kajian = $pathAnalisa;
-            $ajuan->jenis_ajuan = $this->jenis_ajuan;
-            $ajuan->tanggal_update_terakhir = now();
-            $ajuan->status_ajuans_id = 1;
-            $ajuan->users_id = auth()->id();
-            $ajuan->save();
+        $ajuan = new Ajuan();
+        $ajuan->units_id = auth()->user()->units_id ?? 1;
+        $ajuan->tanggal_ajuan = $this->tanggal_ajuan;
+        $ajuan->hps = (int) $this->hps;
+        $ajuan->spesifikasi = $this->spesifikasi;
+        $ajuan->file_rab = $pathRab;
+        $ajuan->file_nota_dinas = $pathNodin;
+        $ajuan->file_analisa_kajian = $pathAnalisa;
+        $ajuan->jenis_ajuan = $this->jenis_ajuan;
+        $ajuan->tanggal_update_terakhir = now();
+        $ajuan->status_ajuans_id = 1;
+        $ajuan->users_id = auth()->id();
+        $ajuan->save();
 
-            $this->reset();
-            $this->dispatch('modal-stored', name: 'pengajuan');
-            // logger($ajuan);
-        } catch (\Throwable $th) {
-            // logger($th->getMessage());
-            $this->dispatch('modal-stored', name: $th->getMessage());
-        }
+        $this->reset();
+        $this->dispatch('modal-stored', name: 'pengajuan');
     }
 }; ?>
 
