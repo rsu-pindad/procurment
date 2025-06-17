@@ -65,8 +65,8 @@ new class extends Component {
 
     public function store(): void
     {
+        $validated = $this->validate();
         try {
-            $validated = $this->validate();
             $pathRab = $this->file_rab->store('rab');
             $pathNodin = $this->file_nota_dinas->store('nodin');
             $pathAnalisa = $this->file_analisa_kajian->store('analisa');
