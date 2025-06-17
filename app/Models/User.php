@@ -56,4 +56,9 @@ class User extends Authenticatable implements LaratrustUser
     {
         return $this->hasMany(\App\Models\Ajuan::class);
     }
+
+    public function scopeWithRole($query, string $roleName)
+    {
+        return $query->whereHas('roles', fn ($q) => $q->where('name', $roleName));
+    }
 }
