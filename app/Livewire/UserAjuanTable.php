@@ -31,7 +31,7 @@ final class UserAjuanTable extends PowerGridComponent
 
     public function datasource(): Builder
     {
-        return Ajuan::query()->with('unit')->where('users_id', auth()->id());
+        return Ajuan::query()->with(['unit','status_ajuan'])->where('users_id', auth()->id());
     }
 
     public function relationSearch(): array
@@ -52,7 +52,7 @@ final class UserAjuanTable extends PowerGridComponent
             ->add('file_analisa_kajian')
             ->add('jenis_ajuan', fn(Ajuan $model) => \App\Enums\JenisAjuan::from($model->jenis_ajuan)->labels())
             ->add('tanggal_update_terakhir_formatted', fn (Ajuan $model) => Carbon::parse($model->tanggal_update_terakhir)->format('d/m/Y H:i:s'))
-            ->add('status_ajuans_id');
+            ->add('status_ajuans_id', fn($model) => e($model->status_ajuan?->nama_status_ajuan));
     }
 
     public function columns(): array
