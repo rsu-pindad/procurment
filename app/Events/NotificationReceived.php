@@ -27,7 +27,7 @@ class NotificationReceived implements ShouldBroadcast
 
     public function broadcastWith()
     {
-        // logger('Siarkan notifikasi untuk user ' . $this->userId);
+        logger('Siarkan notifikasi untuk user ' . $this->userId);
         return [
             'message' => $this->notification->data['message'],
             'ajuan_id' => $this->notification->data['ajuan_id'],
