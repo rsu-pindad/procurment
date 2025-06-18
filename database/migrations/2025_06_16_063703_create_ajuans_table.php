@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('units_id')->nullable()->constrained('units', 'id');
             $table->date('tanggal_ajuan')->nullable(true);
+            $table->string('produk_ajuan');
             $table->unsignedBigInteger('hps')->nullable(true)->default(0);
             $table->text('spesifikasi')->nullable(true);
             $table->string('file_rab')->nullable(true);
