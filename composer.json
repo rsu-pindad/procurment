@@ -9,13 +9,14 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "ably/ably-php": "^1.1",
+        "ably/laravel-broadcaster": "^1.0",
         "laravel/framework": "^11.0",
         "laravel/tinker": "^2.9",
         "livewire/livewire": "^3.4",
         "livewire/volt": "^1.7.0",
         "owen-it/laravel-auditing": "^14.0",
         "power-components/livewire-powergrid": "^6.4",
-        "pusher/pusher-php-server": "^7.2",
         "santigarcor/laratrust": "^8.5"
     },
     "require-dev": {
