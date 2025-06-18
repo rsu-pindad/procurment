@@ -63,31 +63,9 @@ final class UserAjuanTable extends PowerGridComponent
             Column::make('Unit', 'units_id'),
             Column::make('Tanggal ajuan', 'tanggal_ajuan_formatted', 'tanggal_ajuan')
                 ->sortable(),
-
-            Column::make('Hps', 'hps'),
-            Column::make('Spesifikasi', 'spesifikasi')
-                ->sortable()
-                ->searchable(),
-
-            Column::make('RAB', 'file_rab')
-                ->sortable()
-                ->searchable(),
-
-            Column::make('Nota Dinas', 'file_nota_dinas')
-                ->sortable()
-                ->searchable(),
-
-            Column::make('Analisa', 'file_analisa_kajian')
-                ->sortable()
-                ->searchable(),
-
             Column::make('Jenis ajuan', 'jenis_ajuan')
                 ->sortable()
                 ->searchable(),
-
-            Column::make('Tanggal update terakhir', 'tanggal_update_terakhir_formatted', 'tanggal_update_terakhir')
-                ->sortable(),
-
             Column::make('Status', 'status_ajuans_id'),
 
             Column::action('#')
