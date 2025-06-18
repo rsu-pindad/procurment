@@ -17,7 +17,8 @@
         "livewire/volt": "^1.7.0",
         "owen-it/laravel-auditing": "^14.0",
         "power-components/livewire-powergrid": "^6.4",
-        "santigarcor/laratrust": "^8.5"
+        "santigarcor/laratrust": "^8.5",
+        "vladimir-yuldashev/laravel-queue-rabbitmq": "^14.2"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.15",
