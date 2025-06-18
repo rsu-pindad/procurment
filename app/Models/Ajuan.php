@@ -13,6 +13,7 @@ class Ajuan extends Model implements Auditable
     protected $fillable = [
         'units_id',
         'tanggal_ajuan',
+        'produk_ajuan',
         'hps',
         'spesifikasi',
         'file_rab',
@@ -29,8 +30,13 @@ class Ajuan extends Model implements Auditable
         return $this->belongsTo(\App\Models\User::class, 'users_id', 'id');
     }
 
-    public function unit() : BelongsTo
+    public function unit(): BelongsTo
     {
         return $this->belongsTo(\App\Models\Admin\Unit::class, 'units_id', 'id');
+    }
+
+    public function status_ajuan() : BelongsTo
+    {
+        return $this->belongsTo(\App\Models\Admin\StatusAjuan::class, 'status_ajuans_id', 'id');
     }
 }
