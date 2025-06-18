@@ -49,7 +49,7 @@ new class extends Component {
                 </h2>
 
                 <p class="mt-1 text-sm text-gray-600">
-                    {{ __('form unit.') }}
+                    {{ __('Masukkan informasi unit pada form di bawah ini.') }}
                 </p>
             </header>
             <form class="space-y-6" wire:submit="storeUnit">
@@ -61,8 +61,7 @@ new class extends Component {
                 </div>
                 <div>
                     <x-input-label for="keterangan_unit" :value="__('keterangan unit')" />
-                    <x-text-input class="mt-1 block w-full" id="keterangan_unit" name="keterangan_unit" type="text"
-                        wire:model="keterangan_unit" />
+                    <x-textarea id="keterangan_unit" name="keterangan" wire:model="keterangan_unit" autofocus />
                     <x-input-error class="mt-2" :messages="$errors->get('keterangan_unit')" />
                 </div>
                 <div class="flex items-center gap-4">

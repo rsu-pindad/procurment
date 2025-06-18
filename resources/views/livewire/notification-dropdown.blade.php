@@ -28,7 +28,7 @@
             @forelse ($notifications as $notification)
                 <x-notification-item :notification="$notification" />
             @empty
-                <p class="p-3 text-sm text-gray-500">Tidak ada notifikasi</p>
+                <p class="p-3 text-sm text-gray-500">belum ada notifikasi masuk</p>
             @endforelse
         </div>
     </x-slot>

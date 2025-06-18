@@ -5,13 +5,13 @@ use Illuminate\Validation\Rule;
 use App\Models\Ajuan;
 use Livewire\WithFileUploads;
 use App\Enums\JenisAjuan;
-use App\Notifications\PengajuanUserNotification;
 
 new class extends Component {
     use WithFileUploads;
 
     public ?string $units_id = null;
     public ?string $tanggal_ajuan = null;
+    public ?string $produk_ajuan = null;
     public ?string $hps = '0';
     public ?string $spesifikasi = null;
     public $file_rab;
@@ -25,6 +25,7 @@ new class extends Component {
     {
         return [
             'tanggal_ajuan' => ['required', 'date'],
+            'produk_ajuan' => ['required', 'string', 'min:3', 'max:255'],
             'hps' => ['required', 'numeric', 'min:10000', 'max:500000000'],
             'spesifikasi' => ['required', 'string', 'max:255'],
             'file_rab' => ['required', 'file', 'mimes:pdf', 'max:2048'],
@@ -39,6 +40,9 @@ new class extends Component {
         return [
             'tanggal_ajuan.required' => __('validation.tanggal_ajuan.required'),
             'tanggal_ajuan.date' => __('validation.tanggal_ajuan.date'),
+            'produk_ajuan.required' => __('validation.produk_ajuan.required'),
+            'produk_ajuan.min' => __('validation.produk_ajuan.min'),
+            'produk_ajuan.max' => __('validation.produk_ajuan.max'),
             'hps.required' => __('validation.hps.required'),
             'hps.numeric' => __('validation.hps.numeric'),
             'hps.min' => __('validation.hps.min'),
@@ -81,6 +85,7 @@ new class extends Component {
         $ajuan = new Ajuan();
         $ajuan->units_id = $this->unit;
         $ajuan->tanggal_ajuan = $this->tanggal_ajuan;
+        $ajuan->produk_ajuan = $this->produk_ajuan;
         $ajuan->hps = (int) $this->hps;
         $ajuan->spesifikasi = $this->spesifikasi;
         $ajuan->file_rab = $pathRab;
@@ -95,7 +100,7 @@ new class extends Component {
         \App\Models\User::withRole('pengadaan')
             ->get()
             ->each(function ($pengadaan) use ($ajuan) {
-                $pengadaan->notify(new PengajuanUserNotification($ajuan));
+                $pengadaan->notify(new \App\Notifications\PengajuanUserNotification($ajuan));
                 // Siarkan event untuk realtime update
                 // event(new \App\Events\NotificationReceived($pengadaan->notifications()->latest()->first(), $pengadaan->id));
             });
@@ -122,7 +127,7 @@ new class extends Component {
             </header>
             <form wire:submit.prevent="store">
                 <!-- Grid untuk input fields -->
-                <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <x-input-label for="tanggal_ajuan" :value="__('tanggal ajuan')" />
                         <x-text-input class="mt-1 block w-full" id="tanggal_ajuan" name="tanggal_ajuan" type="date"
@@ -130,9 +135,15 @@ new class extends Component {
                         <x-input-error class="mt-2" :messages="$errors->get('tanggal_ajuan')" />
                     </div>
                     <div>
-                        <x-input-label for="unit" :value="__('Unit')" />
+                        <x-input-label for="produk_ajuan" :value="__('produk atau jasa ajuan')" />
+                        <x-text-input class="mt-1 block w-full" id="produk_ajuan" name="produk_ajuan" type="text"
+                            wire:model="produk_ajuan" autofocus autocomplete="produk_ajuan" />
+                        <x-input-error class="mt-2" :messages="$errors->get('produk_ajuan')" />
+                    </div>
+                    <div>
+                        <x-input-label for="unit" :value="__('unit')" />
                         <x-select-input id="unit" name="unit" wire:model.lazy="unit">
-                            <option value="">{{ __('Pilih Unit') }}</option>
+                            <option value="">{{ __('pilih unit') }}</option>
                             @foreach ($this->units as $unit)
                                 <option value="{{ $unit->id }}">{{ $unit->nama_unit }}</option>
                             @endforeach
@@ -144,30 +155,30 @@ new class extends Component {
                         <x-money-input class="mt-1 block w-full" id="hps" wire:model.lazy="hps" autofocus />
                         <x-input-error class="mt-2" :messages="$errors->get('hps')" />
                     </div>
-                    <div>
+                    <div class="col-span-2">
                         <x-input-label for="spesifikasi" :value="__('spesifikasi')" />
                         <x-textarea id="spesifikasi" name="keterangan" wire:model="spesifikasi" autofocus />
                         <x-input-error class="mt-2" :messages="$errors->get('spesifikasi')" />
                     </div>
                     <div>
-                        <x-input-label for="file_rab" :value="__('Dokumen RAB (PDF)')" />
+                        <x-input-label for="file_rab" :value="__('dokumen rab (pdf)')" />
                         <x-file-input class="mt-1 block w-full" id="file_rab" wire:model="file_rab" autofocus />
                         <x-input-error class="mt-1" :messages="$errors->get('file_rab')" />
                     </div>
                     <div>
-                        <x-input-label for="file_nota_dinas" :value="__('Dokumen Nota Dinas (PDF)')" />
+                        <x-input-label for="file_nota_dinas" :value="__('dokumen nota dinas (pdf)')" />
                         <x-file-input class="mt-1 block w-full" id="file_nota_dinas" wire:model="file_nota_dinas"
                             autofocus />
                         <x-input-error class="mt-1" :messages="$errors->get('file_nota_dinas')" />
                     </div>
-                    <div>
-                        <x-input-label for="file_analisa_kajian" :value="__('Dokumen Analisa (PDF)')" />
+                    <div class="col-span-2">
+                        <x-input-label for="file_analisa_kajian" :value="__('dokumen analisa (pdf)')" />
                         <x-file-input class="mt-1 block w-full" id="file_analisa_kajian"
                             wire:model="file_analisa_kajian" autofocus />
                         <x-input-error class="mt-1" :messages="$errors->get('file_analisa_kajian')" />
                     </div>
                     <div>
-                        <x-input-label for="jenis_ajuan" :value="__('Jenis Ajuan')" />
+                        <x-input-label for="jenis_ajuan" :value="__('jenis ajuan')" />
                         <x-radio-enum name="jenis_ajuan" enum="App\Enums\JenisAjuan" model="jenis_ajuan" />
                         <x-input-error class="mt-1" :messages="$errors->get('jenis_ajuan')" />
                     </div>
