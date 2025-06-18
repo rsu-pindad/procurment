@@ -3,7 +3,6 @@
 namespace App\Livewire;
 
 use App\Models\Admin\Unit;
-use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use PowerComponents\LivewirePowerGrid\Button;
 use PowerComponents\LivewirePowerGrid\Column;
@@ -44,30 +43,22 @@ final class UnitTable extends PowerGridComponent
         return PowerGrid::fields()
             ->add('id')
             ->add('nama_unit')
-            ->add('keterangan_unit')
-            ->add('created_at');
+            ->add('keterangan_unit');
     }
 
     public function columns(): array
     {
         return [
-            Column::make('Id', 'id'),
-            Column::make('Nama unit', 'nama_unit')
+            Column::make('No', 'id')
+                ->index(),
+            Column::make('Nama', 'nama_unit')
                 ->sortable()
                 ->searchable(),
 
-            Column::make('Keterangan unit', 'keterangan_unit')
+            Column::make('Keterangan', 'keterangan_unit')
                 ->sortable()
                 ->searchable(),
-
-            Column::make('Created at', 'created_at_formatted', 'created_at')
-                ->sortable(),
-
-            // Column::make('Created at', 'created_at')
-            //     ->sortable()
-            //     ->searchable(),
-
-            Column::action('Action')
+            Column::action('#')
         ];
     }
 
