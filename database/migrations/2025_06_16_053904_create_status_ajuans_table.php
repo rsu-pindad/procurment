@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('status_ajuans', function (Blueprint $table) {
             $table->id();
-            $table->string('nama_ajuan')->unique();
+            $table->string('nama_status_ajuan')->unique();
             $table->unsignedTinyInteger('urutan_ajuan')->unique();
             $table->timestamps();
         });
