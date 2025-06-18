@@ -6,6 +6,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\DatabaseMessage;
+use Illuminate\Notifications\Messages\MailMessage;
 
 class PengajuanUserNotification extends Notification implements ShouldQueue
 {
@@ -26,6 +27,7 @@ class PengajuanUserNotification extends Notification implements ShouldQueue
      */
     public function via($notifiable)
     {
+        // return ['database', 'mail'];
         return ['database'];
     }
 
@@ -34,7 +36,8 @@ class PengajuanUserNotification extends Notification implements ShouldQueue
      */
     public function toDatabase($notifiable)
     {
-        $pesan = 'Pengajuan baru dari unit ' . $this->ajuan->unit->nama_unit . PHP_EOL;
+        $pesan = 'pengajuan baru dari unit ' . $this->ajuan->unit->nama_unit . PHP_EOL;
+        $pesan .= 'nama atau jasa ' . $this->ajuan->produk_ajuan . PHP_EOL;
         $pesan .= 'oleh ' . $this->ajuan->users->name;
         $data = [
             'message' => $pesan,
@@ -49,5 +52,21 @@ class PengajuanUserNotification extends Notification implements ShouldQueue
         ], $notifiable->id));
 
         return $data;
+    }
+
+    /**
+     * Notifikasi via email
+     */
+    public function toMail($notifiable)
+    {
+        $pesan = 'pengajuan baru dari unit ' . $this->ajuan->unit->nama_unit . PHP_EOL;
+        $pesan .= 'nama atau jasa ' . $this->ajuan->produk_ajuan . PHP_EOL;
+        $pesan .= 'oleh ' . $this->ajuan->users->name;
+        return (new MailMessage)
+            ->subject($pesan)
+            ->markdown('emails.pengajuan.notification', [
+                'ajuan' => $this->ajuan,
+                'user' => $notifiable,
+            ]);
     }
 }
