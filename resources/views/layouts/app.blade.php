@@ -34,10 +34,34 @@
                 {{ $slot }}
             </main>
         </div>
-        <script>
-            window.userId = @js(auth()->id());
-        </script>
 
+        <livewire:notification-manager />
+        <script type="module">
+            const notyf = new Notyf({
+                duration: 10000,
+                position: {
+                    x: 'right',
+                    y: 'top',
+                },
+                ripple: true,
+                dismissible: true,
+                types: [{
+                    type: 'info',
+                    background: 'blue',
+                    icon: false
+                }]
+            });
+            window.userId = @js(auth()->id());
+            Echo.private(`user.${window.userId}`)
+                .listen('NotificationReceived', (e) => {
+                    notyf.open({
+                        type: 'info',
+                        message: e.message
+                    });
+                    Livewire.dispatch('notificationReceived', e);
+                    console.log('NotificationReceived event:', e);
+                });
+        </script>
     </body>
 
 </html>

@@ -10,10 +10,11 @@ new class extends Component {
     public ?string $notif = null;
     public bool $showModal = false;
 
-    protected $listeners = ['show-ajuan-detail' => 'showAjuanDetail'];
+    protected $listeners = ['eventDetail' => 'showDetail'];
 
-    public function showAjuanDetail(string $notificationId, int $ajuanId): void
+    public function showDetail(string $notificationId, int $ajuanId): void
     {
+        // dd($notificationId);
         $this->ajuan = Ajuan::with(['unit', 'status_ajuan'])->findOrFail($ajuanId);
         $this->notif = $notificationId;
         $this->showModal = true;
@@ -40,7 +41,7 @@ new class extends Component {
     }
 }; ?>
 
-<section>
+<div>
     @if ($showModal)
         <x-modal-native name="ajuan-detail" :show="$showModal">
             <div class="p-4 space-y-4">
@@ -104,4 +105,4 @@ new class extends Component {
             </div>
         </x-modal-native>
     @endif
-</section>
+</div>

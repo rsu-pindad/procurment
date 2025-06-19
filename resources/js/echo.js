@@ -4,22 +4,22 @@ import { Notyf } from 'notyf';
 import 'notyf/notyf.min.css';
 
 window.Notyf = Notyf;
-const notyf = new Notyf({
-    duration: 10000,
-    position: {
-        x: 'right',
-        y: 'top',
-    },
-    ripple: true,
-    dismissible: true,
-    types: [
-        {
-            type: 'info',
-            background: 'blue',
-            icon: false
-        }
-    ]
-});
+// const notyf = new Notyf({
+//     duration: 10000,
+//     position: {
+//         x: 'right',
+//         y: 'top',
+//     },
+//     ripple: true,
+//     dismissible: true,
+//     types: [
+//         {
+//             type: 'info',
+//             background: 'blue',
+//             icon: false
+//         }
+//     ]
+// });
 
 window.Ably = Ably;
 window.Echo = new Echo({
@@ -41,13 +41,13 @@ window.Echo.connector.ably.connection.on(stateChange => {
     }
 });
 
-window.Echo.private(`user.${window.userId}`)
-    .listen('NotificationReceived', (e) => {
-        notyf.open({
-            type: 'info',
-            message: e.message
-        });
-        Livewire.dispatch('notificationReceived', e);
-        console.log('NotificationReceived event:', e);
-    });
+// window.Echo.private(`user.${window.userId}`)
+//     .listen('NotificationReceived', (e) => {
+//         notyf.open({
+//             type: 'info',
+//             message: e.message
+//         });
+//         Livewire.dispatch('notificationReceived', e);
+//         console.log('NotificationReceived event:', e);
+//     });
 

@@ -27,7 +27,7 @@ class NotificationDropdown extends Component
 
     public function openNotification($notificationId, $ajuanId)
     {
-        $this->dispatch('show-ajuan-detail', notificationId: $notificationId, ajuanId:$ajuanId);
+        $this->dispatch('eventDetail', notificationId: $notificationId, ajuanId:$ajuanId);
     }
 
     public function refreshNotifications()
