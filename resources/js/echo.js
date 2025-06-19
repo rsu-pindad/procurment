@@ -40,7 +40,13 @@ window.Echo.connector.ably.connection.on(stateChange => {
         console.log('connected to ably server');
     }
 });
-
+window.Echo.connector.ably.connection.on('stateChange', (stateChange) => {
+    if (stateChange.current === 'connected') {
+        console.log('Connected to Ably server');
+    } else if (stateChange.current === 'failed') {
+        console.error('Failed to connect to Ably server:', stateChange.reason);
+    }
+});
 // window.Echo.private(`user.${window.userId}`)
 //     .listen('NotificationReceived', (e) => {
 //         notyf.open({
