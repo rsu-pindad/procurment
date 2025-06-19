@@ -24,7 +24,7 @@ window.Notyf = Notyf;
 window.Ably = Ably;
 window.Echo = new Echo({
     broadcaster: 'ably',
-    key: import.meta.env.VITE_ABLY_PUBLIC_KEY,
+    // key: import.meta.env.VITE_ABLY_PUBLIC_KEY,
     tls: true,
     disableStats: true,
     authEndpoint: '/broadcasting/auth',
