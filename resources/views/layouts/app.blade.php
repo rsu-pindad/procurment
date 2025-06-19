@@ -33,9 +33,9 @@
             <main>
                 {{ $slot }}
             </main>
-        </div>
 
-        <livewire:notification-manager />
+            <livewire:notification-manager />
+        </div>
         <script type="module">
             const notyf = new Notyf({
                 duration: 10000,
