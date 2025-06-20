@@ -40,7 +40,7 @@
             const notyf = new Notyf({
                 duration: 10000,
                 position: {
-                    x: 'right',
+                    x: 'center',
                     y: 'top',
                 },
                 ripple: true,
