@@ -15,9 +15,15 @@
     </div>
 
     <div class="mt-1 flex items-center justify-between text-xs text-gray-500">
-        <span>
-            {{ carbon($notification['data']['created_at'])->diffForHumans() ?? '' }}
+        <span x-data="{
+            timestamp: '{{ $notification['data']['created_at'] }}',
+            get humanTime() {
+                return window.dayjs(this.timestamp).fromNow();
+            }
+        }" x-init="setInterval(() => $el.innerText = humanTime, 60000)">
+            {{ \Carbon\Carbon::parse($notification['data']['created_at'])->diffForHumans() }}
         </span>
+
         <button class="hover:underline hover:text-gray-700 font-medium" type="button"
             wire:click="markAsRead('{{ $notification->id }}')">
             Tandai sudah dibaca
