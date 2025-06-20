@@ -24,6 +24,7 @@ Route::middleware(['auth'])->group(function () {
         ->name('profile');
     Route::view('unit', 'unit')->name('unit');
     Route::view('ajuan', 'ajuan')->name('ajuan');
+    Route::view('monitor', 'monitor')->name('monitor');
 
     // Route::get('/notifikasi', \App\Livewire\Notifikasi::class)->name('notifikasi');
 });
