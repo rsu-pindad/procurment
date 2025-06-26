@@ -15,6 +15,7 @@ new class extends Component {
         $ajuan = Ajuan::findOrFail($id);
         $this->produk_ajuan = $ajuan->produk_ajuan ?? '-';
         $this->audit = $ajuan->audits()->with('user')->get();
+        $this->showVertical = true;
     }
 
     public function getAllStatusesProperty()
@@ -79,5 +80,4 @@ new class extends Component {
     @foreach ($this->statusesWithAudit as $status)
         <x-timeline-vertical-item :status="$status" :produk-ajuan="$this->produk_ajuan" />
     @endforeach
-
 </section>

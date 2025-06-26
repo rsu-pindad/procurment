@@ -32,15 +32,24 @@ new class extends Component {
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" wire:navigate>
                         {{ __('Dashboard') }}
                     </x-nav-link>
-                    <x-nav-link :href="route('unit')" :active="request()->routeIs('unit')" wire:navigate>
-                        {{ __('Unit') }}
-                    </x-nav-link>
-                    <x-nav-link :href="route('ajuan')" :active="request()->routeIs('ajuan')" wire:navigate>
-                        {{ __('Ajuan') }}
-                    </x-nav-link>
-                    <x-nav-link :href="route('monitor')" :active="request()->routeIs('monitor')" wire:navigate>
-                        {{ __('Monitor') }}
-                    </x-nav-link>
+                    @if (auth()->user()->hasRole('admin'))
+                        <x-nav-link :href="route('unit')" :active="request()->routeIs('unit')" wire:navigate>
+                            {{ __('Unit') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('kategori')" :active="request()->routeIs('kategori')" wire:navigate>
+                            {{ __('Kategori') }}
+                        </x-nav-link>
+                    @endif
+                    @if (auth()->user()->hasRole('pengadaan'))
+                        <x-nav-link :href="route('ajuan')" :active="request()->routeIs('ajuan')" wire:navigate>
+                            {{ __('Ajuan') }}
+                        </x-nav-link>
+                    @endif
+                    @if (auth()->user()->hasRole(['pegawai', 'pengadaan']))
+                        <x-nav-link :href="route('monitor')" :active="request()->routeIs('monitor')" wire:navigate>
+                            {{ __('Monitor') }}
+                        </x-nav-link>
+                    @endif
                 </div>
             </div>
 

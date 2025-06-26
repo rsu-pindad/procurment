@@ -3,14 +3,10 @@
 namespace Database\Seeders;
 
 use App\Models\Admin\Unit;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class UnitSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
         $data = [
@@ -22,7 +18,10 @@ class UnitSeeder extends Seeder
         ];
 
         foreach ($data as $item) {
-            Unit::create($item);
+            Unit::firstOrCreate(
+                ['nama_unit' => $item['nama_unit']],
+                ['keterangan_unit' => $item['keterangan_unit']]
+            );
         }
     }
 }

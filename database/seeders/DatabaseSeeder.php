@@ -24,6 +24,10 @@ class DatabaseSeeder extends Seeder
             RoleSeeder::class,
             UserSeeder::class,
             StatusAjuanSeeder::class,
+            KategoriPengajuansSeeder::class,
+            AjuansSeeder::class,
+            AjuanStatusAjuanSeeder::class,
+            NotificationsSeeder::class,  // tambah seeder notifikasi di sini
         ]);
     }
 }

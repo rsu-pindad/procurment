@@ -35,8 +35,38 @@ class Ajuan extends Model implements Auditable
         return $this->belongsTo(\App\Models\Admin\Unit::class, 'units_id', 'id');
     }
 
-    public function status_ajuan() : BelongsTo
+    public function status_ajuan(): BelongsTo
     {
         return $this->belongsTo(\App\Models\Admin\StatusAjuan::class, 'status_ajuans_id', 'id');
+    }
+
+    public function kategori_pengajuans()
+    {
+        return $this->belongsToMany(
+            \App\Models\Admin\KategoriPengajuan::class,
+            'ajuan_kategori_pengajuan',
+            'ajuan_id',
+            'kategori_pengajuan_id'
+        );
+    }
+
+    public function statusHistories()
+    {
+        return $this->belongsToMany(\App\Models\Admin\StatusAjuan::class, 'ajuan_status_ajuan', 'ajuan_id', 'status_ajuan_id')
+            ->withPivot(['updated_by', 'realisasi', 'result_realisasi', 'created_at'])
+            ->withTimestamps();
+    }
+
+    public function addStatus($statusId, $userId = null)
+    {
+        $this->statusHistories()->attach($statusId, [
+            'updated_by' => $userId,
+            'created_at' => now(),
+        ]);
+
+        // Set juga status terakhir jika masih pakai kolom status_ajuans_id
+        $this->status_ajuans_id = $statusId;
+        $this->tanggal_update_terakhir = now();
+        $this->save();
     }
 }

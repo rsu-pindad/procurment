@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Broadcast;
+use Livewire\Volt\Volt;
 
 Broadcast::routes(['middleware' => ['web', 'auth']]);
 
@@ -22,9 +23,20 @@ Route::middleware(['auth'])->group(function () {
         ->name('dashboard');
     Route::view('profile', 'profile')
         ->name('profile');
-    Route::view('unit', 'unit')->name('unit');
-    Route::view('ajuan', 'ajuan')->name('ajuan');
-    Route::view('monitor', 'monitor')->name('monitor');
+
+    Route::group(['middleware' => ['role:admin']], function () {
+        Route::view('unit', 'unit')->name('unit');
+        Route::view('kategori', 'kategori')->name('kategori');
+    });
+
+    Route::group(['middleware' => ['role:pengadaan']], function () {
+        Route::view('ajuan', 'ajuan')->name('ajuan');
+        Volt::route('ajuan-detail/{ajuan}', 'ajuan.ajuan-detail')->name('ajuan.detail');
+    });
+
+    Route::group(['middleware' => ['role:pengadaan|pegawai']], function () {
+        Route::view('monitor', 'monitor')->name('monitor');
+    });
 
     // Route::get('/notifikasi', \App\Livewire\Notifikasi::class)->name('notifikasi');
 });

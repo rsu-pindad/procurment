@@ -8,3 +8,9 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 dayjs.extend(relativeTime);
 dayjs.locale('id');
 window.dayjs = dayjs;
+
+import TomSelect from "tom-select";
+import 'tom-select/dist/css/tom-select.css';
+window.TomSelect = TomSelect
+import 'tom-select/dist/js/plugins/virtual_scroll.js';
+import 'tom-select/dist/js/plugins/optgroup_columns.js';

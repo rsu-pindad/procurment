@@ -8,7 +8,10 @@ class NotificationDropdown extends Component
 {
     public $notifications = [];
 
-    protected $listeners = ['notificationReceived' => 'refreshNotifications'];
+    protected $listeners = [
+        'notificationReceived' => 'refreshNotifications',
+        'unitNotificationReceived' => 'refreshNotifications',
+];
 
     public function mount()
     {
