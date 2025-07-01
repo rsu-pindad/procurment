@@ -190,7 +190,7 @@ new class extends Component {
 
 <section>
     <div class="p-4 space-y-4">
-        <form wire:submit.prevent="store">
+        <form>
             <!-- Grid untuk input fields -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
@@ -268,7 +268,7 @@ new class extends Component {
 
             <!-- Tombol submit di luar grid, di bawah -->
             <div class="mt-6 flex items-center gap-4">
-                <x-primary-button>{{ __('Ajukan') }}</x-primary-button>
+                <x-primary-button type="button" wire:click="store">{{ __('Ajukan') }}</x-primary-button>
                 <x-action-message class="me-3" on="modal-stored">
                     {{ __('Pengajuan dikirim.') }}
                 </x-action-message>
