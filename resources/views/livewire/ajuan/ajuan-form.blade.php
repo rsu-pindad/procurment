@@ -232,9 +232,9 @@ new class extends Component {
                     <x-input-error class="mt-2" :messages="$errors->get('jenis_ajuan')" />
                 </div>
                 @if ($rkapForm)
-                    <div class="col-span-2">
+                    <div class="col-span-2" wire:ignore>
                         <x-input-label for="kategori" :value="__('kategori')" />
-                        <livewire:utility.remote-select name="kategori" value="id"
+                        <livewire:utility.remote-select id="kategori" name="kategori"
                             model="App\Models\Admin\KategoriPengajuan" label="nama_kategori"
                             wire:model.lazy="kategori" />
                         <x-input-error class="mt-2" :messages="$errors->get('kategori')" />

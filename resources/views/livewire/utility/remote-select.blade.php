@@ -24,24 +24,17 @@ new class extends Component {
     }
 }; ?>
 
-<div>
-    <x-customs.select-input-tom id="{{ $name }}" name="{{ $name }}" wire:model="selected">
+<div wire:ignore>
+    <x-customs.select-input-tom id="tomselect-{{ $name }}" name="{{ $name }}" wire:model="selected">
         <option value="">{{ __('pilih/cari data...') }}</option>
     </x-customs.select-input-tom>
 </div>
 
-@push('customScripts')
+@script
     <script type="module">
-        // document.addEventListener('open-modal', function(event) {
-        // document.addEventListener('livewire:init', function(event) {
-        // initTomeSelect();
-        // if (event.detail === 'open-create-modal') {
-        //     initTomeSelect();
-        // }
-        // });
         document.addEventListener('livewire:navigated', () => {
-            setTimeout(() => {
-                const el = document.querySelector('#{{ $name }}');
+            function initTomSelect() {
+                const el = document.getElementById('tomselect-{{ $name }}');
                 if (!el) return;
                 // Hancurkan TomSelect sebelumnya jika sudah ada
                 if (el.tomselect) {
@@ -77,16 +70,8 @@ new class extends Component {
                         });
                     }
                 });
-            });
-        }, 2000);
-
-        // document.addEventListener('livewire:message.processed', () => {
-        //     initTomeSelect();
-        // });
-        // document.addEventListener('modal-closed', function(event) {
-        //     console.log('tom modal');
-        //     tomSelectInstance.destroy();
-        //     tomSelectInstance = null;
-        // });
+            }
+            initTomSelect();
+        });
     </script>
-@endpush
+@endscript

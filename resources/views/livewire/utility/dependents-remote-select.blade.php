@@ -30,9 +30,9 @@ new class extends Component {
         placeholder="{{ __('pilih/cari data...') }}" x-ref="select" />
 </div>
 
-@pushOnce('customScripts')
+@script
     <script type="module">
-        document.addEventListener('livewire:init', function() {
+        document.addEventListener('livewire:navigated', function() {
             new TomSelect('#{{ $name }}', {
                 valueField: '{{ $value }}',
                 labelField: '{{ $label }}',
@@ -65,4 +65,4 @@ new class extends Component {
             });
         });
     </script>
-@endPushOnce
+@endscript
