@@ -121,6 +121,7 @@ new class extends Component {
     {
         if ($this->jenis_ajuan === 'nonrkap') {
             $this->rkapForm = false;
+            $this->kategori = null;
         } else {
             $this->rkapForm = true;
         }
@@ -232,7 +233,7 @@ new class extends Component {
                     <x-input-error class="mt-2" :messages="$errors->get('jenis_ajuan')" />
                 </div>
                 @if ($rkapForm)
-                    <div class="col-span-2" wire:ignore>
+                    <div class="col-span-2">
                         <x-input-label for="kategori" :value="__('kategori')" />
                         <livewire:utility.remote-select id="kategori" name="kategori"
                             model="App\Models\Admin\KategoriPengajuan" label="nama_kategori"
