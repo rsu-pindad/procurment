@@ -78,7 +78,6 @@
                 });
             });
         </script>
-        @stack('customScripts')
     </body>
 
 </html>
