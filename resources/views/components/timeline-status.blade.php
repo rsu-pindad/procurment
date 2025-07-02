@@ -12,6 +12,11 @@
 
         @if ($status['is_current'])
             <p class="text-xs font-semibold text-green-600">(Saat ini)</p>
+            @foreach ($status['audits'] as $log)
+                <p class="text-xs text-gray-500">{{ \Carbon\Carbon::parse($log['created_at'])->format('d M Y H:i') }}
+                </p>
+                <p class="text-xs text-gray-500">Oleh: {{ $log['user_name'] }}</p>
+            @endforeach
         @elseif (!$status['is_passed'])
             <p class="text-xs italic text-gray-400">Belum tercapai</p>
         @else

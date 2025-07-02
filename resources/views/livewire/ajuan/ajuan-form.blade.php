@@ -203,7 +203,8 @@ new class extends Component {
                 <div>
                     <x-input-label for="produk_ajuan" :value="__('produk atau jasa ajuan')" />
                     <x-text-input class="mt-1 block w-full" id="produk_ajuan" name="produk_ajuan" type="text"
-                        wire:model="produk_ajuan" autofocus autocomplete="produk_ajuan" />
+                        wire:model="produk_ajuan" autofocus autocomplete="produk_ajuan"
+                        placeholder="nama jasa/produk" />
                     <x-input-error class="mt-2" :messages="$errors->get('produk_ajuan')" />
                 </div>
                 <div>
@@ -223,7 +224,8 @@ new class extends Component {
                 </div>
                 <div class="col-span-2">
                     <x-input-label for="spesifikasi" :value="__('spesifikasi')" />
-                    <x-textarea id="spesifikasi" name="keterangan" wire:model="spesifikasi" autofocus />
+                    <x-textarea id="spesifikasi" name="keterangan" wire:model="spesifikasi" autofocus
+                        placeholder="spefisikasi jasa/produk" />
                     <x-input-error class="mt-2" :messages="$errors->get('spesifikasi')" />
                 </div>
                 <div class="col-span-2">

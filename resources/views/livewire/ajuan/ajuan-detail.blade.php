@@ -11,12 +11,18 @@ new #[Layout('components.layouts.app')] #[Title('detail pengajuan')] class exten
     public $histories = null;
     public $realisasiTanggal = null;
     public $realisasiSelisih = null;
+    public $statusPengajuan = null;
+
+    protected $listeners = [
+        'refreshStatusData' => 'refreshStatusData',
+    ];
 
     // Mount menerima model langsung via route model binding
     public function mount(Ajuan $ajuan)
     {
         $this->ajuan = $ajuan;
         $this->loadData();
+        $this->statusPengajuan = $this->lastStatusId;
     }
 
     protected function loadData()
@@ -60,7 +66,7 @@ new #[Layout('components.layouts.app')] #[Title('detail pengajuan')] class exten
                 return $values['status_ajuans_id'] ?? null;
             })
             ->filter()
-            ->unique()
+            // ->unique()
             ->values();
     }
 
@@ -81,6 +87,7 @@ new #[Layout('components.layouts.app')] #[Title('detail pengajuan')] class exten
                 ];
             })
             ->filter(fn($a) => $a['status_id'])
+            ->sortByDesc('created_at')
             ->groupBy('status_id');
     }
 
@@ -93,7 +100,7 @@ new #[Layout('components.layouts.app')] #[Title('detail pengajuan')] class exten
 
         return $allStatuses->map(function ($status) use ($passedStatusIds, $lastStatusId, $groupedAudit) {
             $isPassed = $passedStatusIds->contains($status->id);
-            $isCurrent = $status->id === $lastStatusId;
+            $isCurrent = $status->id == $lastStatusId;
 
             $circleColor = match (true) {
                 $isCurrent => 'bg-green-500',
@@ -118,7 +125,7 @@ new #[Layout('components.layouts.app')] #[Title('detail pengajuan')] class exten
         $lastStatusId = $this->lastStatusId;
 
         $total = max($allStatuses->count() - 1, 1);
-        $lastIndex = $allStatuses->search(fn($s) => $s->id === $lastStatusId);
+        $lastIndex = $allStatuses->search(fn($s) => $s->id == $lastStatusId);
         $progressPercent = ($lastIndex / $total) * 100;
 
         return [
@@ -126,10 +133,30 @@ new #[Layout('components.layouts.app')] #[Title('detail pengajuan')] class exten
             'progressPercent' => $progressPercent,
         ];
     }
+
+    public function refreshStatusData()
+    {
+        $this->loadData();
+        $this->statusPengajuan = $this->lastStatusId;
+    }
+
+    public function updateStatus(): void
+    {
+        $update = $this->ajuan->update(['status_ajuans_id' => $this->statusPengajuan]);
+        if ($update) {
+            // Refresh data audit & histories
+            $this->loadData(); // <--- muat ulang data audit dan histories
+            $this->statusPengajuan = $this->lastStatusId; // <--- perbarui juga status aktif
+
+            $this->dispatch('updated-status', name: 'updatedPengajuan');
+            // $this->dispatch('refreshStatusData');
+            $this->dispatch('updated-status');
+        }
+    }
 };
 ?>
 
-<div>
+<section>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Ajuan') }}
@@ -166,7 +193,7 @@ new #[Layout('components.layouts.app')] #[Title('detail pengajuan')] class exten
                                         <div class="absolute top-2 left-0 w-full h-1 bg-gray-200 rounded"></div>
 
                                         <!-- Progress line active -->
-                                        <div class="absolute top-2 left-0 h-1 bg-blue-500 rounded transition-all duration-700 ease-in-out"
+                                        <div class="absolute top-2 left-0 h-1 bg-green-500 rounded transition-all duration-700 ease-in-out"
                                             style="width: {{ $this->timelineData['progressPercent'] }}%;">
                                         </div>
 
@@ -186,4 +213,44 @@ new #[Layout('components.layouts.app')] #[Title('detail pengajuan')] class exten
             </div>
         </div>
     </div>
-    </section>
+
+    <div class="py-4 sm:py-6">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
+                <form>
+                    <div class="flex justify-between items-center gap-4">
+                        <!-- Select -->
+                        <div class="w-full">
+                            <x-select-input
+                                class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                id="statusPengajuan" name="statusPengajuan" wire:model="statusPengajuan">
+                                @foreach (StatusAjuan::get() as $sp)
+                                    <option value="{{ $sp->id }}">{{ $sp->nama_status_ajuan }}
+                                    </option>
+                                @endforeach
+                            </x-select-input>
+
+                            <x-input-error class="mt-2" :messages="$errors->get('statusPengajuan')" />
+                        </div>
+
+                        <!-- Tombol -->
+                        <div class="shrink-0">
+                            <x-primary-button
+                                class="h-10 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                type="button" wire:click="updateStatus">
+                                {{ __('Konfirmasi Status') }}
+                            </x-primary-button>
+                        </div>
+                    </div>
+
+                    <!-- Notifikasi -->
+                    <x-action-message class="me-3 mt-4" on="updated-status">
+                        {{ __('status diperbarui.') }}
+                    </x-action-message>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+</section>

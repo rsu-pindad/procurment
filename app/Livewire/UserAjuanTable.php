@@ -12,6 +12,7 @@ use PowerComponents\LivewirePowerGrid\Facades\PowerGrid;
 use PowerComponents\LivewirePowerGrid\PowerGridFields;
 use PowerComponents\LivewirePowerGrid\PowerGridComponent;
 use \App\Enums\JenisAjuan;
+// use PowerComponents\LivewirePowerGrid\Facades\Rule;
 
 final class UserAjuanTable extends PowerGridComponent
 {
@@ -116,15 +117,14 @@ final class UserAjuanTable extends PowerGridComponent
         ];
     }
 
-    /*
-    public function actionRules($row): array
-    {
-       return [
-            // Hide button edit for ID 1
-            Rule::button('edit')
-                ->when(fn($row) => $row->id === 1)
-                ->hide(),
-        ];
-    }
-    */
+
+    // public function actionRules($row): array
+    // {
+    //    return [
+    //         Rule::button('detail')
+    //             ->when(fn($row) => $row->units_id == auth()->user()->unit_id)
+    //             ->hide(),
+    //     ];
+    // }
+
 }

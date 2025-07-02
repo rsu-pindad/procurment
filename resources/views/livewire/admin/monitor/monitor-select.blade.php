@@ -4,11 +4,21 @@ use Livewire\Volt\Component;
 use App\Models\Ajuan;
 
 new class extends Component {
-    public ?string $unit = null;
+    public $unit = null;
     public ?string $pengajuan = null;
     public $selectedUnit;
     public $pengadaans = [];
     public bool $disabledUnit = true;
+
+    public function mount()
+    {
+        // $this->unit = null;
+        if (auth()->user()->hasRole('pegawai')) {
+            // $this->unit = auth()->user()->unit_id;
+            $this->disabledUnit = false;
+            $this->selectedUnit = auth()->user()->unit_id;
+        }
+    }
 
     public function getListeners()
     {
@@ -36,12 +46,15 @@ new class extends Component {
 }; ?>
 
 <section class="space-y-4 sm:flex sm:space-x-6 sm:space-y-0">
-    <div class="flex-1 min-w-0">
-        <x-input-label for="unit" :value="__('Unit')" />
-        <livewire:utility.remote-select
-            class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-            name="unit" value="id" model="App\Models\Admin\Unit" label="nama_unit" wire:model.live="unit" />
-    </div>
+    @if (auth()->user()->hasRole('pengadaan'))
+        <div class="flex-1 min-w-0">
+            <x-input-label for="unit" :value="__('Unit')" />
+            <livewire:utility.remote-select
+                class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                name="unit" value="id" model="App\Models\Admin\Unit" label="nama_unit" wire:model.live="unit"
+                :selected="$unit" />
+        </div>
+    @endif
     <div class="flex-1 min-w-0">
         <x-input-label for="pengajuan" :value="__('Pengajuan')" />
         <x-select-input

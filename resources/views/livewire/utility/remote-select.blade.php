@@ -10,12 +10,13 @@ new class extends Component {
     public string $label = 'name';
     public string $name = 'remoteSelect';
 
-    public function mount($model, $value = 'id', $label = 'name', $name = 'remoteSelect')
+    public function mount($model, $value = 'id', $label = 'name', $name = 'remoteSelect', $selected = null)
     {
         $this->model = $model;
         $this->value = $value;
         $this->label = $label;
         $this->name = $name;
+        $this->selected = $selected;
     }
 
     public function getSelectedProperty()
@@ -68,6 +69,12 @@ new class extends Component {
                         Livewire.dispatch('setSelected{{ $name }}', {
                             id: value
                         });
+                    },
+                    onInitialize() {
+                        const defaultValue = "{{ $selected }}";
+                        if (defaultValue) {
+                            this.setValue(defaultValue, true);
+                        }
                     }
                 });
             }
