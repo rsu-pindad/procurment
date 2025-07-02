@@ -44,7 +44,10 @@ new class extends Component {
 
     public function getPassedStatusIdsProperty()
     {
-        return collect($this->audit)->map(fn($a) => is_array($a->new_values) ? $a->new_values['status_ajuans_id'] ?? null : json_decode($a->new_values, true)['status_ajuans_id'] ?? null)->filter()->unique()->values();
+        return collect($this->audit)
+            ->map(fn($a) => is_array($a->new_values) ? $a->new_values['status_ajuans_id'] ?? null : json_decode($a->new_values, true)['status_ajuans_id'] ?? null)
+            ->filter() // ->unique()
+            ->values();
     }
 
     public function getLastStatusIdProperty()
@@ -76,7 +79,7 @@ new class extends Component {
 
         return $allStatuses->map(function ($status) use ($passedStatusIds, $lastStatusId, $groupedAudit) {
             $isPassed = $passedStatusIds->contains($status->id);
-            $isCurrent = $status->id === $lastStatusId;
+            $isCurrent = $status->id == $lastStatusId;
 
             // Warna dot: default abu, biru jika sudah lewat, hijau jika saat ini
             $circleColor = match (true) {
@@ -102,7 +105,7 @@ new class extends Component {
         $lastStatusId = $this->lastStatusId;
 
         $total = max($allStatuses->count() - 1, 1);
-        $lastIndex = $allStatuses->search(fn($s) => $s->id === $lastStatusId);
+        $lastIndex = $allStatuses->search(fn($s) => $s->id == $lastStatusId);
         $progressPercent = ($lastIndex / $total) * 100;
 
         return [
@@ -127,12 +130,12 @@ new class extends Component {
         <div class="relative max-w-full" style="height: 100px; min-width: 640px;"> {{-- min width biar timeline gak terlalu sempit --}}
 
             <!-- Garis dasar timeline -->
-            <div class="absolute left-4 right-4 h-1 bg-gray-300 rounded" style="top: 32px; z-index: 1;"></div>
+            <div class="absolute left-4 right-4 h-1 bg-gray-300 rounded" style="top: 32px;"></div>
             {{-- padding kiri kanan 1rem supaya garis gak penuh ke pinggir --}}
 
             <!-- Garis progres -->
             <div class="absolute left-4 h-1 bg-blue-600 rounded transition-all duration-700 ease-in-out"
-                style="width: {{ $this->timelineData['progressPercent'] }}%; top: 32px; z-index: 2;">
+                style="width: {{ $this->timelineData['progressPercent'] }}%; top: 32px;">
             </div>
 
             <!-- Status titik-titik -->
