@@ -119,32 +119,31 @@ new class extends Component {
 <section>
     <div class="w-full mb-6">
         @if ($histories && $realisasiTanggal && $realisasiSelisih)
-            <div>
-                <h3 class="text-lg font-semibold mb-1">Estimasi realisasi menuju delivery</h3>
-                <p class="text-gray-700">{{ $realisasiSelisih . ' ' . $realisasiTanggal }}</p>
-            </div>
+            <h3 class="text-lg font-semibold mb-2">Estimasi realisasi menuju delivery</h3>
+            <p>{{ $realisasiSelisih . ' ' . $realisasiTanggal }}</p>
         @endif
     </div>
 
-    <div class="w-full bg-white py-10 px-4 sm:px-6 lg:px-8 overflow-x-auto">
-        <div class="relative max-w-full" style="height: 100px; min-width: 640px;"> {{-- min width biar timeline gak terlalu sempit --}}
+    <div class="w-full bg-white py-10 px-4 sm:px-6 lg:px-8">
+        <div class="overflow-x-auto">
+            <div class="relative min-w-[640px] max-w-full">
 
-            <!-- Garis dasar timeline -->
-            <div class="absolute left-4 right-4 h-1 bg-gray-300 rounded" style="top: 32px;"></div>
-            {{-- padding kiri kanan 1rem supaya garis gak penuh ke pinggir --}}
+                <!-- Progress line background -->
+                <div class="absolute top-2 left-0 w-full h-1 bg-gray-300 rounded"></div>
 
-            <!-- Garis progres -->
-            <div class="absolute left-4 h-1 bg-blue-600 rounded transition-all duration-700 ease-in-out"
-                style="width: {{ $this->timelineData['progressPercent'] }}%; top: 32px;">
+                <!-- Progress line active -->
+                <div class="absolute top-2 left-0 h-1 bg-green-500 rounded transition-all duration-700 ease-in-out animate-pulse"
+                    style="width: {{ $this->timelineData['progressPercent'] }}%;">
+                </div>
+
+                <!-- Timeline items -->
+                <div class="flex justify-between w-full relative z-10">
+                    @foreach ($this->statusViewModels as $status)
+                        <x-timeline-status :status="$status" />
+                    @endforeach
+                </div>
+
             </div>
-
-            <!-- Status titik-titik -->
-            <div class="flex justify-between w-full relative z-10 px-4" style="padding-top: 10px;">
-                @foreach ($this->statusViewModels as $status)
-                    <x-timeline-status :status="$status" />
-                @endforeach
-            </div>
-
         </div>
     </div>
 </section>
