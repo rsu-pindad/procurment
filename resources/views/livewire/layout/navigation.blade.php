@@ -40,15 +40,15 @@ new class extends Component {
                             {{ __('Kategori') }}
                         </x-nav-link>
                     @endif
-                    @if (auth()->user()->hasRole('pengadaan'))
+                    @if (auth()->user()->hasRole(['pengadaan', 'pegawai']))
                         <x-nav-link :href="route('ajuan')" :active="request()->routeIs('ajuan')" wire:navigate>
                             {{ __('Ajuan') }}
                         </x-nav-link>
-                    @endif
-                    @if (auth()->user()->hasRole(['pegawai', 'pengadaan']))
-                        <x-nav-link :href="route('monitor')" :active="request()->routeIs('monitor')" wire:navigate>
-                            {{ __('Monitor') }}
-                        </x-nav-link>
+                        @if (auth()->user()->hasRole('pengadaan'))
+                            <x-nav-link :href="route('monitor')" :active="request()->routeIs('monitor')" wire:navigate>
+                                {{ __('Monitor') }}
+                            </x-nav-link>
+                        @endif
                     @endif
                 </div>
             </div>
@@ -114,6 +114,26 @@ new class extends Component {
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" wire:navigate>
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
+
+            @if (auth()->user()->hasRole('admin'))
+                <x-responsive-nav-link :href="route('unit')" :active="request()->routeIs('unit')" wire:navigate>
+                    {{ __('Unit') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('kategori')" :active="request()->routeIs('kategori')" wire:navigate>
+                    {{ __('Kategori') }}
+                </x-responsive-nav-link>
+            @endif
+
+            @if (auth()->user()->hasRole(['pengadaan', 'pegawai']))
+                <x-responsive-nav-link :href="route('ajuan')" :active="request()->routeIs('ajuan')" wire:navigate>
+                    {{ __('Ajuan') }}
+                </x-responsive-nav-link>
+                @if (auth()->user()->hasRole('pengadaan'))
+                    <x-responsive-nav-link :href="route('monitor')" :active="request()->routeIs('monitor')" wire:navigate>
+                        {{ __('Monitor') }}
+                    </x-responsive-nav-link>
+                @endif
+            @endif
         </div>
 
         <!-- Responsive Settings Options -->
@@ -138,4 +158,5 @@ new class extends Component {
             </div>
         </div>
     </div>
+
 </nav>
