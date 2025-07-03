@@ -50,6 +50,16 @@ class Ajuan extends Model implements Auditable
         );
     }
 
+    public function reason_pengajuans()
+    {
+        return $this->hasMany(
+            \App\Models\Admin\ReasonAjuan::class,
+            'ajuan_id',
+            'id'
+        );
+    }
+
+
     public function statusHistories()
     {
         return $this->belongsToMany(\App\Models\Admin\StatusAjuan::class, 'ajuan_status_ajuan', 'ajuan_id', 'status_ajuan_id')
