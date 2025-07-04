@@ -8,21 +8,11 @@ use App\Http\Controllers\Pengadaan\NodinFileController;
 
 Broadcast::routes(['middleware' => ['web', 'auth']]);
 
-// Route::view('/', 'welcome');
 Route::get('/', function () {
     return redirect('/login');
 });
 
-// Route::view('dashboard', 'dashboard')
-//     ->middleware(['auth', 'verified'])
-//     ->name('dashboard');
-// Route::view('profile', 'profile')
-//     ->middleware(['auth'])
-//     ->name('profile');
-
 Route::middleware(['auth'])->group(function () {
-    // Route::view('dashboard', 'dashboard')
-    //     ->name('dashboard');
     Volt::route('dashboard', 'beranda.index')->name('dashboard');
     Route::view('profile', 'profile')
         ->name('profile');
@@ -49,8 +39,6 @@ Route::middleware(['auth'])->group(function () {
     Route::group(['middleware' => ['role:pengadaan|pegawai']], function () {
         Route::view('monitor', 'monitor')->name('monitor');
     });
-
-    // Route::get('/notifikasi', \App\Livewire\Notifikasi::class)->name('notifikasi');
 });
 
 require __DIR__ . '/auth.php';
