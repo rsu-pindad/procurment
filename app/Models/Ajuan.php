@@ -23,6 +23,8 @@ class Ajuan extends Model implements Auditable
         'tanggal_update_terakhir',
         'status_ajuans_id',
         'users_id',
+        'vendor_id',
+        'hps_nego'
     ];
 
     public function users(): BelongsTo
