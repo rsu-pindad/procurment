@@ -4,6 +4,7 @@ use Livewire\Volt\Component;
 use App\Models\Ajuan;
 use App\Models\Admin\StatusAjuan;
 use Livewire\Attributes\{Layout, Title};
+use App\Enums\InputType;
 
 new #[Layout('components.layouts.app')] #[Title('detail pengajuan')] class extends Component {
     public Ajuan $ajuan;
@@ -12,24 +13,82 @@ new #[Layout('components.layouts.app')] #[Title('detail pengajuan')] class exten
     public $realisasiTanggal = null;
     public $realisasiSelisih = null;
     public $statusPengajuan = null;
+    public $confirmedStatusPengajuan = null;
     public $reasonAjuan = null;
     public $statusAjuanOptions = [];
+
+    public $selectedVendor;
+    public $hpsNego = 0;
+    public bool $showHpsNego = false;
+    public $uploadedFile;
+    public $tanggalRealisasi;
+    public $textInputTambahan;
+    public $vendors = [];
+    public $reasonData = [];
+
+    // Cache untuk StatusAjuan find agar tidak query berulang
+    protected ?StatusAjuan $cachedSelectedStatus = null;
+
     protected $listeners = ['refreshStatusData' => 'refreshStatusData'];
 
     public function mount(Ajuan $ajuan)
     {
-        $ajuan->load(['status_ajuan', 'unit']);
+        // Eager load necessary relations only once
+        $ajuan->load(['status_ajuan', 'unit', 'reason_pengajuans.status_ajuan', 'reason_pengajuans.users']);
         $this->ajuan = $ajuan;
         $this->loadData();
-        $this->loadReasonData(['status_ajuan', 'users']);
-        $this->statusPengajuan = $this->ajuan->status_ajuans_id;
+        $this->loadReasonData();
+
+        $this->confirmedStatusPengajuan = $ajuan->status_ajuans_id;
+        $this->statusPengajuan = $this->confirmedStatusPengajuan;
         $this->statusAjuanOptions = $this->getStatusAjuanOptions();
+
+        // preload vendors only if needed
+        $this->vendors = [];
+    }
+
+    public function updatedHpsNego($value)
+    {
+        $cleaned = preg_replace('/\D/', '', $value);
+        $this->hpsNego = (int) $cleaned;
+    }
+
+    public function goBack(): void
+    {
+        $this->redirect('/ajuan', navigate: true);
+    }
+
+    public function updatedStatusPengajuan($value)
+    {
+        if (!$value) {
+            $this->vendors = [];
+            $this->showHpsNego = false;
+            $this->cachedSelectedStatus = null;
+            $this->reset(['uploadedFile', 'tanggalRealisasi', 'textInputTambahan', 'selectedVendor']);
+            return;
+        }
+
+        // Cache StatusAjuan find result to avoid duplicate queries
+        $this->cachedSelectedStatus = StatusAjuan::find($value);
+
+        if ($this->cachedSelectedStatus && $this->cachedSelectedStatus->input_type === InputType::SELECT_INPUT) {
+            $this->vendors = \App\Models\Admin\Vendor::all();
+        } else {
+            $this->vendors = [];
+        }
+
+        $this->showHpsNego = true;
+
+        // Reset input tambahan lainnya (opsional)
+        $this->reset(['uploadedFile', 'tanggalRealisasi', 'textInputTambahan', 'selectedVendor']);
     }
 
     protected function loadData()
     {
         $this->audit = $this->ajuan->audits()->with('user')->get();
-        $this->histories = $this->ajuan->statusHistories()->orderByDesc('created_at')->first();
+
+        // Ambil last history dengan eager loading pivot
+        $this->histories = $this->ajuan->statusHistories()->orderByDesc('created_at')->withPivot('realisasi')->first();
 
         if ($this->histories && $this->histories->pivot?->realisasi) {
             $realisasiDate = carbon($this->histories->pivot->realisasi)->startOfDay();
@@ -43,17 +102,16 @@ new #[Layout('components.layouts.app')] #[Title('detail pengajuan')] class exten
                 $selisih > 0 => "$selisih hari yang lalu dari",
                 default => abs($selisih) . ' hari lagi ke',
             };
+        } else {
+            $this->realisasiTanggal = null;
+            $this->realisasiSelisih = null;
         }
     }
 
     protected function loadReasonData()
     {
+        // reason_pengajuans sudah eager loaded
         $this->reasonData = $this->ajuan->reason_pengajuans->sortByDesc('created_at');
-    }
-
-    public function goBack(): void
-    {
-        $this->redirect('/ajuan', navigate: true);
     }
 
     public function getAllStatusesProperty()
@@ -98,8 +156,10 @@ new #[Layout('components.layouts.app')] #[Title('detail pengajuan')] class exten
     {
         $allStatuses = $this->allStatuses;
         $passedStatusIds = $this->passedStatusIds;
-        // $lastStatusId = $this->lastStatusId;
-        $lastStatusId = (int) $this->statusPengajuan;
+
+        // Gunakan confirmedStatusPengajuan yang sudah disimpan
+        $lastStatusId = (int) $this->confirmedStatusPengajuan;
+
         $groupedAudit = $this->groupedAudit;
 
         return $allStatuses->map(function ($status) use ($passedStatusIds, $lastStatusId, $groupedAudit) {
@@ -126,7 +186,6 @@ new #[Layout('components.layouts.app')] #[Title('detail pengajuan')] class exten
     public function getTimelineDataProperty()
     {
         $allStatuses = $this->allStatuses;
-        // $lastStatusId = $this->lastStatusId;
         $lastStatusId = $this->ajuan->status_ajuans_id;
 
         $total = max($allStatuses->count() - 1, 1);
@@ -142,13 +201,17 @@ new #[Layout('components.layouts.app')] #[Title('detail pengajuan')] class exten
     public function refreshStatusData()
     {
         $this->loadData();
-        $this->statusPengajuan = $this->lastStatusId;
+
+        // Update confirmedStatusPengajuan agar konsisten
+        $this->ajuan->refresh();
+        $this->confirmedStatusPengajuan = $this->ajuan->status_ajuans_id;
+        $this->statusPengajuan = $this->confirmedStatusPengajuan;
     }
 
     public function getStatusAjuanOptions()
     {
         if (!$this->ajuan->status_ajuan) {
-            return [];
+            return collect([]);
         }
 
         return StatusAjuan::where('urutan_ajuan', '<=', $this->ajuan->status_ajuan->urutan_ajuan + 1)
@@ -158,7 +221,19 @@ new #[Layout('components.layouts.app')] #[Title('detail pengajuan')] class exten
 
     public function updateStatus(): void
     {
-        $update = $this->ajuan->update(['status_ajuans_id' => $this->statusPengajuan]);
+        $data = [
+            'status_ajuans_id' => $this->statusPengajuan,
+        ];
+
+        if ($this->selectedVendor !== null) {
+            $data['vendor_id'] = $this->selectedVendor;
+        }
+
+        if ($this->hpsNego !== 0) {
+            $data['hps_nego'] = $this->hpsNego;
+        }
+
+        $update = $this->ajuan->update($data);
 
         $storeReason = new \App\Models\Admin\ReasonAjuan();
         $storeReason->ajuan_id = $this->ajuan->id;
@@ -172,16 +247,31 @@ new #[Layout('components.layouts.app')] #[Title('detail pengajuan')] class exten
 
             $this->loadData();
 
-            $this->ajuan->refresh(); // ⬅️ Tambahkan ini agar reason_pengajuans ikut di-refresh
+            $this->ajuan->refresh(); // Refresh relasi dan data ajuan
             $this->loadReasonData();
 
-            $this->statusPengajuan = $this->ajuan->status_ajuans_id;
+            $this->confirmedStatusPengajuan = $this->ajuan->status_ajuans_id;
+            $this->statusPengajuan = $this->confirmedStatusPengajuan;
             $this->statusAjuanOptions = $this->getStatusAjuanOptions();
 
             $this->dispatch('updated-status');
         }
     }
+
+    public function getSelectedInputTypeProperty()
+    {
+        // Reuse cached status if sudah ada, untuk menghindari query berulang
+        if ($this->cachedSelectedStatus && $this->cachedSelectedStatus->id === $this->statusPengajuan) {
+            return $this->cachedSelectedStatus->input_type;
+        }
+
+        // Jika belum cache, cari dan cache
+        $this->cachedSelectedStatus = StatusAjuan::find($this->statusPengajuan);
+
+        return $this->cachedSelectedStatus?->input_type;
+    }
 };
+
 ?>
 
 <section>
@@ -241,14 +331,13 @@ new #[Layout('components.layouts.app')] #[Title('detail pengajuan')] class exten
                     <!-- Form Konfirmasi Status -->
                     <div class="px-4 py-5">
                         <h3 class="text-sm font-semibold text-gray-800 mb-3">Perbarui Status Ajuan</h3>
-                        <form>
-                            <div class="flex flex-col sm:flex-row items-center justify-between gap-3">
-                                <!-- Status Dropdown -->
-                                <div class="w-full sm:max-w-xs">
+                        <form class="space-y-4">
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                <!-- Kolom 1 - Select Status -->
+                                <div>
                                     <x-input-label for="statusPengajuan" :value="__('Pilih Status')" />
-                                    <x-select-input
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200"
-                                        id="statusPengajuan" name="statusPengajuan" wire:model="statusPengajuan">
+                                    <x-select-input class="mt-1 block w-full" id="statusPengajuan"
+                                        wire:model.live="statusPengajuan">
                                         <option value="">-- Pilih Status --</option>
                                         @foreach ($statusAjuanOptions as $sp)
                                             <option value="{{ $sp->id }}">{{ $sp->nama_status_ajuan }}</option>
@@ -257,50 +346,101 @@ new #[Layout('components.layouts.app')] #[Title('detail pengajuan')] class exten
                                     <x-input-error class="mt-1.5 text-sm" :messages="$errors->get('statusPengajuan')" />
                                 </div>
 
-                                <!-- Reason Textarea -->
-                                <div class="w-full sm:max-w-lg">
-                                    <x-input-label for="reason" :value="__('Alasan / Catatan')" />
-                                    <x-textarea
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200"
-                                        id="reason" name="reason" wire:model="reasonAjuan" rows="3" />
+                                <!-- Kolom 2 & 3 - Reason Textarea -->
+                                <div class="sm:col-span-2 row-span-2">
+                                    <x-input-label for="reasonAjuan" :value="__('Alasan / Catatan')" />
+                                    <x-textarea class="mt-1 block w-full" id="reasonAjuan" wire:model="reasonAjuan"
+                                        rows="4" />
                                     <x-input-error class="mt-1.5 text-sm" :messages="$errors->get('reasonAjuan')" />
                                 </div>
 
-                                <!-- Tombol -->
-                                <div class="w-full sm:w-auto">
-                                    <x-primary-button
-                                        class="w-full sm:w-auto h-9 px-5 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 focus:ring-2 focus:ring-blue-500"
-                                        type="button" wire:click="updateStatus">
-                                        {{ __('Konfirmasi Status') }}
-                                    </x-primary-button>
-                                </div>
+                                <!-- Kolom 1 (di bawah status) - Kondisional Input -->
+                                @if ($this->selectedInputType === InputType::SELECT_INPUT)
+                                    <div>
+                                        <x-input-label for="vendor" :value="__('Pilih Vendor')" />
+                                        <x-select-input class="mt-1 block w-full" id="vendor"
+                                            wire:model="selectedVendor">
+                                            <option value="">-- Pilih Vendor --</option>
+                                            @foreach ($vendors ?? [] as $vendor)
+                                                <option value="{{ $vendor->id }}">{{ $vendor->nama_vendor }}</option>
+                                            @endforeach
+                                        </x-select-input>
+                                    </div>
+                                @elseif ($this->selectedInputType === InputType::FILE_INPUT)
+                                    <div>
+                                        <x-input-label for="uploadedFile" :value="__('Unggah Dokumen')" />
+                                        <input
+                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200"
+                                            type="file" wire:model="uploadedFile" />
+                                    </div>
+                                @elseif ($this->selectedInputType === InputType::DATE_PICKER)
+                                    <div>
+                                        <x-input-label for="tanggalRealisasi" :value="__('Tanggal Realisasi')" />
+                                        <x-text-input class="mt-1 block w-full" id="tanggalRealisasi" type="date"
+                                            wire:model="tanggalRealisasi" />
+                                    </div>
+                                @elseif ($this->selectedInputType === InputType::TEXT_INPUT)
+                                    <div>
+                                        <x-input-label for="textInputTambahan" :value="__('Input Tambahan')" />
+                                        <x-text-input class="mt-1 block w-full" id="textInputTambahan" type="text"
+                                            wire:model="textInputTambahan" />
+                                    </div>
+                                @endif
+
+                                @if ($this->showHpsNego && $this->selectedInputType != null)
+                                    <div>
+                                        <x-input-label for="hpsNego" :value="__('HPS Nego')" />
+                                        <x-money-input class="mt-1 block w-full" id="hpsNego"
+                                            wire:model.lazy="hpsNego" autofocus />
+                                        <x-input-error class="mt-2" :messages="$errors->get('hpsNego')" />
+                                    </div>
+                                @endif
                             </div>
 
-                            <!-- Notifikasi -->
-                            <x-action-message class="mt-3 text-sm text-green-600" on="updated-status">
-                                {{ __('Status diperbarui.') }}
-                            </x-action-message>
+                            <!-- Tombol -->
+                            <div>
+                                <x-primary-button
+                                    class="h-10 px-6 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 focus:ring-2 focus:ring-blue-500"
+                                    type="button" wire:click="updateStatus">
+                                    {{ __('Konfirmasi Status') }}
+                                </x-primary-button>
+
+                                <!-- Notifikasi -->
+                                <x-action-message class="mt-3 text-sm text-green-600" on="updated-status">
+                                    {{ __('Status diperbarui.') }}
+                                </x-action-message>
+                            </div>
                         </form>
+
                     </div>
                 @endif
 
-                @isset($this->reasonData)
+                @if (count($this->reasonData) > 0)
                     <!-- Timeline Reason Status -->
                     <div class="px-4 py-5">
                         <h3 class="text-sm font-semibold text-gray-800 mb-3">Timeline </h3>
                         <div class="max-h-48 overflow-y-auto pr-2 space-y-3">
                             @foreach ($this->reasonData as $reasonLog)
                                 <x-ajuan.reason-timeline>
-                                    <x-ajuan.reason-timeline-item :icon="view('components.icons.user')" :description="$reasonLog->reason_keterangan_ajuan" :status="$reasonLog->status_ajuan->nama_status_ajuan"
-                                        :dateText="$reasonLog->updated_at" :createdBy="$reasonLog->users->name" />
+                                    <x-ajuan.reason-timeline-item :icon="view('components.icons.user')" :description="$reasonLog->reason_keterangan_ajuan"
+                                        :status="$reasonLog->status_ajuan->nama_status_ajuan" :dateText="$reasonLog->updated_at" :createdBy="$reasonLog->users->name" />
                                 </x-ajuan.reason-timeline>
                             @endforeach
                         </div>
                     </div>
-                @endIsset
+                @endif
 
             </div>
         </div>
     </div>
 
 </section>
+
+@script
+    <script>
+        document.getElementById('statusPengajuan').addEventListener('change', () => {
+            // Livewire.dispatch('exportStatusChartPdf');
+            // console.log('ok');
+        });
+    </script>
+@endscript
