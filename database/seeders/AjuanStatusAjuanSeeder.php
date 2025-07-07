@@ -22,18 +22,17 @@ class AjuanStatusAjuanSeeder extends Seeder
         }
 
         foreach ($ajuans as $ajuan) {
-            $randomStatus = $statusAjuans->random(rand(1,3));
+            $status = $statusAjuans->random(); // Ambil hanya satu status acak
 
-            foreach ($randomStatus as $status) {
-                DB::table('ajuan_status_ajuan')->insert([
-                    'ajuan_id' => $ajuan->id,
-                    'status_ajuan_id' => $status->id,
-                    'updated_by' => $users->random()->id,
-                    'realisasi' => now()->addDays(rand(-10, 10))->format('Y-m-d'),
-                    'result_realisasi' => collect(['tercapai', 'telat', 'belum'])->random(),
-                    'created_at' => now(),
-                ]);
-            }
+            DB::table('ajuan_status_ajuan')->insert([
+                'ajuan_id' => $ajuan->id,
+                'status_ajuan_id' => $status->id,
+                'updated_by' => $users->random()->id,
+                'realisasi' => now()->addDays(rand(-10, 10))->format('Y-m-d'),
+                'result_realisasi' => collect(['tercapai', 'telat', 'belum'])->random(),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
         }
 
         $this->command->info('Seeder AjuanStatusAjuan selesai.');

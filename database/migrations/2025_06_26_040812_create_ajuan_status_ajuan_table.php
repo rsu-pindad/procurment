@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('ajuan_status_ajuan', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('ajuan_id')->constrained('ajuans')->onDelete('cascade');
+            $table->foreignId('ajuan_id')->unique()->constrained('ajuans')->onDelete('cascade');
             $table->foreignId('status_ajuan_id')->constrained('status_ajuans')->onDelete('cascade');
             $table->foreignId('updated_by')->nullable()->constrained('users');
             $table->date('realisasi')->nullable(); // tanggal realisasi yang diinput user
