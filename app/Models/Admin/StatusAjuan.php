@@ -8,7 +8,8 @@ class StatusAjuan extends Model
 {
     protected $fillable = [
         'nama_status_ajuan',
-        'urutan_ajuan'
+        'urutan_ajuan',
+        'input_type'
     ];
 
     public function ajuans()
