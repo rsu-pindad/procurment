@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('nama_status_ajuan')->unique();
             $table->unsignedTinyInteger('urutan_ajuan')->unique();
+            $table->string('input_type')->nullable();
             $table->timestamps();
         });
     }
