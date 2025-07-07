@@ -27,7 +27,8 @@ class DatabaseSeeder extends Seeder
             KategoriPengajuansSeeder::class,
             AjuansSeeder::class,
             AjuanStatusAjuanSeeder::class,
-            NotificationsSeeder::class,  // tambah seeder notifikasi di sini
+            NotificationsSeeder::class,
+            VendorSeeder::class,
         ]);
     }
 }
