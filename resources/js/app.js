@@ -16,7 +16,8 @@ import 'tom-select/dist/js/plugins/virtual_scroll.js';
 import 'tom-select/dist/js/plugins/optgroup_columns.js';
 
 import { Chart, BarController, BarElement, CategoryScale, LinearScale, Tooltip, Legend } from 'chart.js';
-
-Chart.register(BarController, BarElement, CategoryScale, LinearScale, Tooltip, Legend);
+import ChartDataLabels from 'chartjs-plugin-datalabels';
+Chart.register(BarController, BarElement, CategoryScale, LinearScale, Tooltip, Legend, ChartDataLabels);
 
 window.Chart = Chart;
+window.ChartDataLabels = ChartDataLabels;
