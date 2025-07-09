@@ -61,7 +61,6 @@ class Ajuan extends Model implements Auditable
         );
     }
 
-
     public function statusHistories()
     {
         return $this->belongsToMany(\App\Models\Admin\StatusAjuan::class, 'ajuan_status_ajuan', 'ajuan_id', 'status_ajuan_id')
@@ -80,5 +79,10 @@ class Ajuan extends Model implements Auditable
         $this->status_ajuans_id = $statusId;
         $this->tanggal_update_terakhir = now();
         $this->save();
+    }
+
+    public function latestStatus()
+    {
+        return $this->hasOne(\App\Models\Admin\AjuanStatusAjuan::class, 'ajuan_id');
     }
 }
