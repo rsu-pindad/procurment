@@ -4,6 +4,8 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use PowerComponents\LivewirePowerGrid\Button;
+use App\Models\Ajuan;
+use App\Observers\AjuanObserver;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -21,7 +23,6 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         \Illuminate\Support\Carbon::setLocale('id');
-        // (opsional) set locale Laravel juga
         \App::setLocale('id');
 
         Button::macro('navigate', function () {
@@ -31,5 +32,7 @@ class AppServiceProvider extends ServiceProvider
 
             return $this;
         });
+
+        Ajuan::observe(AjuanObserver::class);
     }
 }
