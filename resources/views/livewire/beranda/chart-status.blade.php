@@ -83,8 +83,7 @@ new class extends Component {
             'labels' => $data['labels'],
             'data' => $data['data'],
         ]);
-        $name = 'data-status_' . now()->format('Ymd_His') . '.pdf';
-        return response()->streamDownload(fn() => print $pdf->stream(), $name);
+        return response()->streamDownload(fn() => print $pdf->stream(), 'data-status_' . now()->format('Ymd_His') . '.pdf');
     }
 
     #[On('exportStatusChartPdf')]
@@ -92,7 +91,7 @@ new class extends Component {
     {
         $pdf = Pdf::loadView('exports.status-chart-image', ['image' => $image])->setPaper('a4', 'landscape');
 
-        return response()->streamDownload(fn() => print $pdf->stream(), 'chart-status.pdf');
+        return response()->streamDownload(fn() => print $pdf->stream(), 'chart-status_' . now()->format('Ymd_His') . '.pdf');
     }
 };
 ?>

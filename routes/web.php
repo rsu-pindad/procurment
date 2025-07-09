@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AssetController;
 use Livewire\Volt\Volt;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Broadcast;
@@ -41,5 +42,7 @@ Route::middleware(['auth'])->group(function () {
         Route::view('monitor', 'monitor')->name('monitor');
     });
 });
+
+Route::get('/image/{filename}', [AssetController::class, 'show']);
 
 require __DIR__ . '/auth.php';
