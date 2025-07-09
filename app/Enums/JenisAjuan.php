@@ -4,8 +4,8 @@ namespace App\Enums;
 
 enum JenisAjuan: string
 {
-    case RKAP = 'rkap';
-    case NONRKAP = 'nonrkap';
+    case RKAP = 'RKAP';
+    case NONRKAP = 'NONRKAP';
     case DEFAULT = '';
 
     public function labels(): string
