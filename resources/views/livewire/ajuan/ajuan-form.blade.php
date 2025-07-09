@@ -277,6 +277,5 @@ new class extends Component {
                 </x-action-message>
             </div>
         </form>
-
     </div>
 </section>
