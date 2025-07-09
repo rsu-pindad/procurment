@@ -13,7 +13,8 @@ Route::get('/', function () {
 });
 
 Route::middleware(['auth'])->group(function () {
-    Volt::route('dashboard', 'beranda.index')->name('dashboard');
+    // Volt::route('dashboard', 'beranda.index')->name('dashboard');
+    Route::view('beranda', 'beranda.indexs')->name('dashboard');
     Route::view('profile', 'profile')
         ->name('profile');
 

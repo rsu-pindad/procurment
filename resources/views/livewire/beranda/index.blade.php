@@ -200,97 +200,109 @@ new #[Layout('components.layouts.app')] #[Title('detail pengajuan')] class exten
 
             <!-- Chart HPS -->
             <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                <x-section-header title="HPS">
-                    Pengajuan berdasarkan HPS
-                </x-section-header>
+                <!-- Judul -->
+                <div class="mb-4">
+                    <x-section-header title="HPS">
+                        Pengajuan berdasarkan HPS
+                    </x-section-header>
+                </div>
 
-                <x-primary-button wire:click="exportExcel">
-                    📥 Export Excel
-                </x-primary-button>
+                <!-- Tombol-tombol -->
+                <div class="flex flex-col sm:flex-row flex-wrap gap-2 mb-6">
+                    <x-primary-button class="w-full sm:w-auto" wire:click="exportExcel">
+                        📥 Export Excel
+                    </x-primary-button>
 
-                <x-secondary-button wire:click="exportPdf">
-                    🧾 Export PDF
-                </x-secondary-button>
+                    <x-secondary-button class="w-full sm:w-auto" wire:click="exportPdf">
+                        🧾 Export PDF
+                    </x-secondary-button>
 
-                <x-secondary-button id="export-chart-btn">
-                    🖼️ Export Chart ke PDF
-                </x-secondary-button>
+                    <x-secondary-button class="w-full sm:w-auto" id="export-chart-btn">
+                        🖼️ Export Chart ke PDF
+                    </x-secondary-button>
+                </div>
 
-                <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
-                    <!-- Dropdown -->
-                    <div class="col-span-1">
-                    </div>
-
-                    <!-- Chart -->
-                    <div class="col-span-2" wire:ignore>
-                        <canvas id="ajuanChart" height="200" width="600"></canvas>
-                    </div>
+                <!-- Chart -->
+                <div class="w-full overflow-auto" wire:ignore>
+                    <canvas class="w-full max-w-full" id="ajuanChart" height="200"></canvas>
                 </div>
             </div>
 
             <!-- Chart Progress -->
             <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                <x-section-header title="Progress Pengajuan">
-                    Progress pengajuan berdasarkan status
-                </x-section-header>
+                <!-- Judul -->
+                <div class="mb-4">
+                    <x-section-header title="Progress Pengajuan">
+                        Progress pengajuan berdasarkan status
+                    </x-section-header>
+                </div>
 
-                <x-secondary-button id="export-chart-progress-btn">
-                    🖼️ Export Chart Progress ke PDF
-                </x-secondary-button>
+                <!-- Tombol-tombol -->
+                <div class="flex flex-col sm:flex-row flex-wrap gap-2 mb-6">
+                    <x-secondary-button class="w-full sm:w-auto" id="export-chart-progress-btn">
+                        🖼️ Export Chart Progress ke PDF
+                    </x-secondary-button>
 
-                <x-secondary-button wire:click="exportStatusExcel">
-                    📊 Export Status Excel
-                </x-secondary-button>
+                    <x-secondary-button class="w-full sm:w-auto" wire:click="exportStatusExcel">
+                        📊 Export Status Excel
+                    </x-secondary-button>
+                </div>
 
-                <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
-                    <!-- Dropdown -->
-                    <div class="col-span-1">
-                        <label class="text-sm text-gray-600 block mb-1" for="unit-filter">Filter Unit:</label>
-                        <x-select-input
-                            class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200"
-                            id="selectedUnitId" name="selectedUnitId" wire:model.live="selectedUnitId">
-                            <option value="">-- Pilih Unit --</option>
-                            @foreach ($unitOptions as $u)
-                                <option value="{{ $u->id }}">{{ $u->nama_unit }}</option>
-                            @endforeach
-                        </x-select-input>
-                    </div>
+                <!-- Dropdown -->
+                <div class="mb-6">
+                    <label class="text-sm text-gray-600 block mb-1" for="unit-filter">Filter Unit:</label>
+                    <x-select-input
+                        class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200"
+                        id="selectedUnitId" name="selectedUnitId" wire:model.live="selectedUnitId">
+                        <option value="">-- Pilih Unit --</option>
+                        @foreach ($unitOptions as $u)
+                            <option value="{{ $u->id }}">{{ $u->nama_unit }}</option>
+                        @endforeach
+                    </x-select-input>
+                </div>
 
-                    <!-- Chart -->
-                    <div class="col-span-2" wire:ignore>
-                        <canvas id="statusChart" height="200" width="600"></canvas>
-                    </div>
+                <!-- Chart -->
+                <div class="w-full overflow-auto" wire:ignore>
+                    <canvas class="w-full max-w-full" id="statusChart" height="200"></canvas>
                 </div>
             </div>
 
+            <!-- Chart Tempo -->
             <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                <x-section-header title="Progress Pengajuan">
-                    Progress pengajuan berdasarkan status
-                </x-section-header>
+                <!-- Judul -->
+                <div class="mb-4">
+                    <x-section-header title="Tempo Pengajuan">
+                        Pengajuan berdasarkan tempo
+                    </x-section-header>
+                </div>
 
-                <x-secondary-button id="export-chart-progress-btn">
-                    🖼️ Export Chart Progress ke PDF
-                </x-secondary-button>
+                <!-- Tombol-tombol -->
+                <div class="flex flex-col sm:flex-row flex-wrap gap-2 mb-6">
+                    <x-secondary-button class="w-full sm:w-auto" id="export-chart-progress-btn">
+                        🖼️ Export Chart Progress ke PDF
+                    </x-secondary-button>
 
-                <x-secondary-button wire:click="exportJatuhTempoExcel">
-                    ⏰ Export Jatuh Tempo Excel
-                </x-secondary-button>
+                    <x-secondary-button class="w-full sm:w-auto" wire:click="exportJatuhTempoExcel">
+                        ⏰ Export Jatuh Tempo Excel
+                    </x-secondary-button>
+                </div>
 
-                <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
-                    <div class="col-span-1">
-                        <label class="text-sm text-gray-600 block mb-1" for="bulanFilter">Filter Jatuh Tempo:</label>
-                        <x-select-input
-                            class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200"
-                            id="bulanFilter" name="bulanFilter" wire:model.live="bulanFilter">
-                            <option value="">-- Pilih Jatuh Tempo --</option>
-                            <option value="3">3 Bulan Lagi</option>
-                            <option value="2">2 Bulan Lagi</option>
-                            <option value="1">1 Bulan Lagi</option>
-                        </x-select-input>
-                    </div>
-                    <div class="col-span-2" wire:ignore>
-                        <canvas id="jatuhTempoChart" height="200" width="600"></canvas>
-                    </div>
+                <!-- Dropdown -->
+                <div class="mb-6">
+                    <label class="text-sm text-gray-600 block mb-1" for="bulanFilter">Filter Jatuh Tempo:</label>
+                    <x-select-input
+                        class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200"
+                        id="bulanFilter" name="bulanFilter" wire:model.live="bulanFilter">
+                        <option value="">-- Pilih Jatuh Tempo --</option>
+                        <option value="3">3 Bulan Lagi</option>
+                        <option value="2">2 Bulan Lagi</option>
+                        <option value="1">1 Bulan Lagi</option>
+                    </x-select-input>
+                </div>
+
+                <!-- Chart -->
+                <div class="w-full overflow-auto" wire:ignore>
+                    <canvas class="w-full max-w-full" id="jatuhTempoChart" height="200"></canvas>
                 </div>
             </div>
 
