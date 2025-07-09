@@ -44,11 +44,6 @@ new class extends Component {
                         <x-nav-link :href="route('ajuan')" :active="request()->routeIs('ajuan')" wire:navigate>
                             {{ __('Ajuan') }}
                         </x-nav-link>
-                        @if (auth()->user()->hasRole('pengadaan'))
-                            <x-nav-link :href="route('monitor')" :active="request()->routeIs('monitor')" wire:navigate>
-                                {{ __('Monitor') }}
-                            </x-nav-link>
-                        @endif
                     @endif
                 </div>
             </div>
