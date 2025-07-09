@@ -10,11 +10,11 @@ class UnitSeeder extends Seeder
     public function run(): void
     {
         $data = [
-            ['nama_unit' => 'A', 'keterangan_unit' => 1],
-            ['nama_unit' => 'B', 'keterangan_unit' => 2],
-            ['nama_unit' => 'C', 'keterangan_unit' => 3],
-            ['nama_unit' => 'D', 'keterangan_unit' => 4],
-            ['nama_unit' => 'E', 'keterangan_unit' => 5],
+            ['nama_unit' => 'DIR', 'keterangan_unit' => 'direktorat'],
+            ['nama_unit' => 'RSB', 'keterangan_unit' => 'rumah sakit pindad bandung'],
+            ['nama_unit' => 'RST', 'keterangan_unit' => 'rumah sakit pindad turen'],
+            ['nama_unit' => 'RSL', 'keterangan_unit' => 'rsl'],
+            ['nama_unit' => 'KUL', 'keterangan_unit' => 'klinik utama lembang'],
         ];
 
         foreach ($data as $item) {
