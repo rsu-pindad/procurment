@@ -18,11 +18,11 @@ class DatabaseSeeder extends Seeder
             RoleSeeder::class,
             UserSeeder::class,
             StatusAjuanSeeder::class,
-            // KategoriPengajuansSeeder::class,
+            KategoriPengajuansSeeder::class,
             // AjuansSeeder::class,
             // AjuanStatusAjuanSeeder::class,
             // NotificationsSeeder::class,
-            // VendorSeeder::class,
+            VendorSeeder::class,
         ]);
     }
 }
