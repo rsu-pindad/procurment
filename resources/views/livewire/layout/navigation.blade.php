@@ -16,6 +16,7 @@ new class extends Component {
 }; ?>
 
 <nav class="bg-white border-b border-gray-100" x-data="{ open: false }">
+
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
@@ -45,45 +46,56 @@ new class extends Component {
                             {{ __('Ajuan') }}
                         </x-nav-link>
                     @endif
+                    @if (auth()->user()->hasRole(['pengadaan', 'admin']))
+                    <x-nav-link :href="route('management.user')" :active="request()->routeIs('management.user')" wire:navigate>
+                            {{ __('Management User') }}
+                    </x-nav-link>
+                    @endif
                 </div>
             </div>
 
-            <!-- Settings Dropdown -->
-            <div class="hidden sm:flex sm:items-center sm:ms-6 space-x-1">
+            <div class="flex items-center space-x-4 ms-auto">
+                <!-- Notification Dropdown -->
+                <div class="sm:flex sm:items-center sm:ms-6 space-x-1">
+                    <livewire:notification-dropdown />
+                </div>
 
-                <livewire:notification-dropdown />
+                <!-- Settings Dropdown -->
+                <div class="hidden sm:flex sm:items-center sm:ms-6 space-x-1">
 
-                <x-dropdown align="right" width="48">
-                    <x-slot name="trigger">
-                        <button
-                            class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
-                            <div x-data="{{ json_encode(['name' => auth()->user()->name]) }}" x-text="name"
-                                x-on:profile-updated.window="name = $event.detail.name"></div>
+                    <!-- Settings Dropdown (Mobile Version) -->
+                    <x-dropdown align="right" width="48">
+                        <x-slot name="trigger">
+                            <button
+                                class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
+                                <div x-data="{{ json_encode(['name' => auth()->user()->name]) }}" x-text="name"
+                                    x-on:profile-updated.window="name = $event.detail.name"></div>
 
-                            <div class="ms-1">
-                                <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg"
-                                    viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd"
-                                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                        clip-rule="evenodd" />
-                                </svg>
-                            </div>
-                        </button>
-                    </x-slot>
+                                <div class="ms-1">
+                                    <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg"
+                                        viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd"
+                                            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                </div>
+                            </button>
+                        </x-slot>
 
-                    <x-slot name="content">
-                        <x-dropdown-link :href="route('profile')" wire:navigate>
-                            {{ __('Profile') }}
-                        </x-dropdown-link>
-
-                        <!-- Authentication -->
-                        <button class="w-full text-start" wire:click="logout">
-                            <x-dropdown-link>
-                                {{ __('Log Out') }}
+                        <x-slot name="content">
+                            <x-dropdown-link :href="route('profile')" wire:navigate>
+                                {{ __('Profile') }}
                             </x-dropdown-link>
-                        </button>
-                    </x-slot>
-                </x-dropdown>
+
+                            <!-- Authentication -->
+                            <button class="w-full text-start" wire:click="logout">
+                                <x-dropdown-link>
+                                    {{ __('Keluar') }}
+                                </x-dropdown-link>
+                            </button>
+                        </x-slot>
+                    </x-dropdown>
+                </div>
             </div>
 
             <!-- Hamburger -->
@@ -107,7 +119,7 @@ new class extends Component {
     <div class="hidden sm:hidden" :class="{ 'block': open, 'hidden': !open }">
         <div class="pt-2 pb-3 space-y-1">
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" wire:navigate>
-                {{ __('Dashboard') }}
+                {{ __('dashboard') }}
             </x-responsive-nav-link>
 
             @if (auth()->user()->hasRole('admin'))
@@ -123,11 +135,6 @@ new class extends Component {
                 <x-responsive-nav-link :href="route('ajuan')" :active="request()->routeIs('ajuan')" wire:navigate>
                     {{ __('Ajuan') }}
                 </x-responsive-nav-link>
-                @if (auth()->user()->hasRole('pengadaan'))
-                    <x-responsive-nav-link :href="route('monitor')" :active="request()->routeIs('monitor')" wire:navigate>
-                        {{ __('Monitor') }}
-                    </x-responsive-nav-link>
-                @endif
             @endif
         </div>
 
@@ -147,7 +154,7 @@ new class extends Component {
                 <!-- Authentication -->
                 <button class="w-full text-start" wire:click="logout">
                     <x-responsive-nav-link>
-                        {{ __('Log Out') }}
+                        {{ __('Keluar') }}
                     </x-responsive-nav-link>
                 </button>
             </div>

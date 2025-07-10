@@ -15,9 +15,8 @@ Route::get('/', function () {
 
 Route::middleware(['auth'])->group(function () {
     // Volt::route('dashboard', 'beranda.index')->name('dashboard');
-    Route::view('beranda', 'beranda.indexs')->name('dashboard');
-    Route::view('profile', 'profile')
-        ->name('profile');
+    Route::view('dashboard', 'beranda.indexs')->name('dashboard');
+    Route::view('profile', 'profile')->name('profile');
 
     Route::group(['middleware' => ['role:admin']], function () {
         Route::view('unit', 'unit')->name('unit');
@@ -40,6 +39,11 @@ Route::middleware(['auth'])->group(function () {
 
     Route::group(['middleware' => ['role:pengadaan|pegawai']], function () {
         Route::view('monitor', 'monitor')->name('monitor');
+    });
+
+    Route::group(['prefix' =>'management'], function(){
+        Route::view('user', 'management.user')->name('management.user');
+        Volt::route('user/unit/{user}', 'user.management-unit')->name('management.user.unit');
     });
 });
 

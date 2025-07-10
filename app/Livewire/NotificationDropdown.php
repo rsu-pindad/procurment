@@ -11,7 +11,7 @@ class NotificationDropdown extends Component
     protected $listeners = [
         'notificationReceived' => 'refreshNotifications',
         'unitNotificationReceived' => 'refreshNotifications',
-];
+    ];
 
     public function mount()
     {
@@ -30,7 +30,7 @@ class NotificationDropdown extends Component
 
     public function openNotification($notificationId, $ajuanId)
     {
-        $this->dispatch('eventDetail', notificationId: $notificationId, ajuanId:$ajuanId);
+        $this->dispatch('eventDetail', notificationId: $notificationId, ajuanId: $ajuanId);
     }
 
     public function refreshNotifications()
