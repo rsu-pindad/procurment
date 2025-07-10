@@ -14,7 +14,7 @@ class KategoriPengajuansSeeder extends Seeder
             ['nama_kategori' => 'Alat Kesehatan', 'deskripsi_kategori' => 'kategori alat kesehatan'],
             ['nama_kategori' => 'Konstruksi', 'deskripsi_kategori' => 'kategori konstruksi barang'],
             ['nama_kategori' => 'Jasa', 'deskripsi_kategori' => 'kategori jasa'],
-            ['nama_kategori' => null, 'deskripsi_kategori' => ''],
+            ['nama_kategori' => '', 'deskripsi_kategori' => ''],
             ['nama_kategori' => 'Investaris Kantor', 'deskripsi_kategori' => 'kategori investaris kantor'],
         ];
 
