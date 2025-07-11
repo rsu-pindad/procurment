@@ -54,18 +54,19 @@ final class UserAjuanTable extends PowerGridComponent
         return PowerGrid::fields()
             ->add('id')
             ->add('units_id', fn ($model) => e($model->unit?->nama_unit))
+            ->add('produk_ajuan')
             ->add('tanggal_ajuan_formatted', fn (Ajuan $model) => Carbon::parse($model->tanggal_ajuan)->format('d/m/Y'))
             ->add('hps', fn (Ajuan $model) => number_format($model->hps, 2, ',', '.'))
-            ->add('spesifikasi')
-            ->add('file_rab')
-            ->add('file_nota_dinas')
-            ->add('file_analisa_kajian')
+            // ->add('spesifikasi')
+            // ->add('file_rab')
+            // ->add('file_nota_dinas')
+            // ->add('file_analisa_kajian')
             // ->add('jenis_ajuan', fn(Ajuan $model) => \App\Enums\JenisAjuan::from($model->jenis_ajuan)->labels())
-            ->add('jenis_ajuan', function ($model) {
-                $val = JenisAjuan::tryFrom($model->jenis_ajuan) ?? JenisAjuan::DEFAULT;
-                return $val->labels();
-            })
-            ->add('tanggal_update_terakhir_formatted', fn (Ajuan $model) => Carbon::parse($model->tanggal_update_terakhir)->format('d/m/Y H:i:s'))
+            // ->add('jenis_ajuan', function ($model) {
+            //     $val = JenisAjuan::tryFrom($model->jenis_ajuan) ?? JenisAjuan::DEFAULT;
+            //     return $val->labels();
+            // })
+            // ->add('tanggal_update_terakhir_formatted', fn (Ajuan $model) => Carbon::parse($model->tanggal_update_terakhir)->format('d/m/Y H:i:s'))
             ->add('status_ajuans_id', fn ($model) => e($model->status_ajuan?->nama_status_ajuan));
     }
 
@@ -74,14 +75,18 @@ final class UserAjuanTable extends PowerGridComponent
         return [
             Column::make('No', 'id')
                 ->index(),
-            Column::make('Unit', 'units_id'),
-            Column::make('Tanggal ajuan', 'tanggal_ajuan_formatted', 'tanggal_ajuan')
-                ->sortable(),
-            Column::make('Jenis ajuan', 'jenis_ajuan')
+            Column::make('Unit', 'units_id')
                 ->sortable()
                 ->searchable(),
-            Column::make('Status', 'status_ajuans_id'),
-
+            Column::make('Nama Produk', 'produk_ajuan')
+                ->searchable(),
+            Column::make('Tanggal ajuan', 'tanggal_ajuan_formatted', 'tanggal_ajuan')
+                ->sortable(),
+            // Column::make('Jenis ajuan', 'jenis_ajuan')
+            //     ->sortable()
+            // ->searchable(),
+            Column::make('Status', 'status_ajuans_id')
+                ->sortable(),
             Column::action('#')
         ];
     }
