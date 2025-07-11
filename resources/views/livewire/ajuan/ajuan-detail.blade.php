@@ -9,6 +9,7 @@ use App\Enums\InputType;
 new #[Layout('components.layouts.app')] #[Title('detail pengajuan')] class extends Component
 {
     public Ajuan $ajuan;
+
     public $audit = [];
     public $histories = null;
     public $realisasiTanggal = null;
@@ -27,14 +28,11 @@ new #[Layout('components.layouts.app')] #[Title('detail pengajuan')] class exten
     public $vendors = [];
     public $reasonData = [];
 
-    // Cache untuk StatusAjuan find agar tidak query berulang
     protected ?StatusAjuan $cachedSelectedStatus = null;
-
     protected $listeners = ['refreshStatusData' => 'refreshStatusData'];
 
     public function mount(Ajuan $ajuan)
     {
-        // Eager load necessary relations only once
         $ajuan->load(['status_ajuan', 'unit', 'reason_pengajuans.status_ajuan', 'reason_pengajuans.users']);
         $this->ajuan = $ajuan;
         $this->loadData();
@@ -111,7 +109,6 @@ new #[Layout('components.layouts.app')] #[Title('detail pengajuan')] class exten
 
     protected function loadReasonData()
     {
-        // reason_pengajuans sudah eager loaded
         $this->reasonData = $this->ajuan->reason_pengajuans->sortByDesc('created_at');
     }
 
@@ -122,14 +119,10 @@ new #[Layout('components.layouts.app')] #[Title('detail pengajuan')] class exten
 
     public function getPassedStatusIdsProperty()
     {
-        return collect($this->audit)
-            ->map(function ($a) {
-                $values = is_array($a->new_values) ? $a->new_values : json_decode($a->new_values, true);
-                return $values['status_ajuans_id'] ?? null;
-            })
-            ->filter()
-            ->unique()
-            ->values();
+        return collect($this->audit)->map(function ($a) {
+            $values = is_array($a->new_values) ? $a->new_values : json_decode($a->new_values, true);
+            return $values['status_ajuans_id'] ?? null;
+        })->filter()->unique()->values();
     }
 
     public function getLastStatusIdProperty()
