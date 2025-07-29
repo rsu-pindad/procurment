@@ -26,6 +26,7 @@ Route::middleware(['auth'])->group(function () {
     Route::group(['middleware' => ['role:pengadaan|pegawai']], function () {
         Route::view('ajuan', 'ajuan')->name('ajuan');
         Volt::route('ajuan-detail/{ajuan}', 'ajuan.ajuan-detail')->name('ajuan.detail');
+        Volt::route('ajuan-edit/{ajuan}', 'ajuan.ajuan-edit')->name('ajuan.edit');
         Route::get('/rab/{filename}', [RabFileController::class, 'show'])
             ->where('filename', '.*')
             ->name('rab.show');

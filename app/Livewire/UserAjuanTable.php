@@ -107,19 +107,28 @@ final class UserAjuanTable extends PowerGridComponent
 
     public function actions(Ajuan $row): array
     {
-        return [
-            // Button::add('edit')
-            //     ->slot('Edit: ' . $row->id)
-            //     ->id()
-            //     ->class('pg-btn-white dark:ring-pg-primary-600 dark:border-pg-primary-600 dark:hover:bg-pg-primary-700 dark:ring-offset-pg-primary-800 dark:text-pg-primary-300 dark:bg-pg-primary-700')
-            //     ->dispatch('edit', ['rowId' => $row->id])
-
+        $button = [
             Button::add('detail')
                 ->slot('Detail')
                 ->class('pg-btn-white')
                 ->route('ajuan.detail', ['ajuan' => $row->id])
                 ->navigate(),
         ];
+
+        if (auth()->user()->hasRole('pengadaan', true)) {
+            $button = array_merge($button, [
+                Button::add('edit')
+                    ->slot('Edit')
+                    ->attributes([
+                        'id' => 'edit-'.$row->id,
+                        'class' => 'pg-btn-white text-blue-500'
+                    ])
+                    ->route('ajuan.edit', ['ajuan' => $row->id])
+                    ->navigate()
+            ]);
+        }
+
+        return $button;
     }
 
 
