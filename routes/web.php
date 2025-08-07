@@ -21,6 +21,7 @@ Route::middleware(['auth'])->group(function () {
     Route::group(['middleware' => ['role:admin']], function () {
         Route::view('unit', 'unit')->name('unit');
         Route::view('kategori', 'kategori')->name('kategori');
+        Route::view('status-ajuan', 'status-ajuan')->name('status-ajuan');
     });
 
     Route::group(['middleware' => ['role:pengadaan|pegawai']], function () {
