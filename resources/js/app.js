@@ -2,8 +2,10 @@ import './bootstrap';
 
 import'./../../vendor/power-components/livewire-powergrid/dist/tailwind.css';
 import './../../vendor/power-components/livewire-powergrid/dist/powergrid';
+import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 import dayjs from 'dayjs';
 import 'dayjs/locale/id';
+import flatpickr from "flatpickr";
 import relativeTime from 'dayjs/plugin/relativeTime';
 dayjs.extend(relativeTime);
 dayjs.locale('id');
@@ -21,3 +23,4 @@ Chart.register(BarController, BarElement, CategoryScale, LinearScale, Tooltip, L
 
 window.Chart = Chart;
 window.ChartDataLabels = ChartDataLabels;
+window.flatpickr = flatpickr;
