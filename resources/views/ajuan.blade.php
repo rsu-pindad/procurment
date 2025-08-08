@@ -1,45 +1,27 @@
 <x-app-layout>
     @if (auth()->user()->hasRole('pengadaan'))
-        <div class="py-4 sm:py-6">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-                <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                    <div class="sm:flex sm:items-center">
-                        <x-section-header title="Form Import">
-                            berikut form import data ajuan
-                        </x-section-header>
-                    </div>
-                    <div class="mt-4 flow-root">
-                        <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-                            <div class="inline-block min-w-full py-2 align-middle sm:px-4 lg:px-6">
-                                <livewire:import.ajuan-import />
-                            </div>
+    <div class="py-4 sm:py-6">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+            <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
+                <div class="sm:flex sm:items-center">
+                    <x-section-header title="Form pengajuan">
+                        silahkan isi form daftar pengajuan yang tersedia dengan detail informasi terkait
+                        masing-masing
+                        pengajuan.
+                    </x-section-header>
+                </div>
+                <div class="mt-4 flow-root">
+                    <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                        <div class="inline-block min-w-full py-2 align-middle sm:px-4 lg:px-6">
+                            <livewire:ajuan.ajuan-form />
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="py-4 sm:py-6">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-                <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                    <div class="sm:flex sm:items-center">
-                        <x-section-header title="Form pengajuan">
-                            silahkan isi form daftar pengajuan yang tersedia dengan detail informasi terkait
-                            masing-masing
-                            pengajuan.
-                        </x-section-header>
-                    </div>
-                    <div class="mt-4 flow-root">
-                        <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-                            <div class="inline-block min-w-full py-2 align-middle sm:px-4 lg:px-6">
-                                <livewire:ajuan.ajuan-form />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+    </div>
+    <livewire:ajuan.ajuan-utility />
     @endif
-
     <div class="py-4 sm:py-6">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
             <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
@@ -47,8 +29,11 @@
                     <x-section-header title="Tabel Ajuan">
                         Berikut adalah daftar ajuan yang tersedia dengan detail informasi terkait masing-masing ajuan.
                     </x-section-header>
+                    @if (auth()->user()->hasRole('pengadaan'))
                     <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
+                        <livewire:import.ajuan-import />
                     </div>
+                    @endif
                 </div>
                 <div class="mt-4 flow-root">
                     <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
@@ -60,4 +45,31 @@
             </div>
         </div>
     </div>
+
+    <script type="module">
+        const notyf = new Notyf({
+            duration: 10000,
+            position: {
+                x: 'center',
+                y: 'center',
+            },
+            ripple: true,
+            dismissible: true,
+            types: [{
+                type: 'info',
+                background: 'orange',
+                icon: false
+            }]
+        });
+
+        document.addEventListener('livewire:init', () => {
+            Livewire.on('info-hapus', (event) => {
+                notyf.open({
+                    type: 'info',
+                    message: event.message
+                });
+                Livewire.dispatch('pg:eventRefresh-user-ajuan-table-z2bm8x-table');
+            });
+        });
+    </script>
 </x-app-layout>
