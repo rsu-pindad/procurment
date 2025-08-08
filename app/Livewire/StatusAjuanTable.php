@@ -3,11 +3,9 @@
 namespace App\Livewire;
 
 use App\Models\Admin\StatusAjuan;
-use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use PowerComponents\LivewirePowerGrid\Button;
 use PowerComponents\LivewirePowerGrid\Column;
-use PowerComponents\LivewirePowerGrid\Facades\Filter;
 use PowerComponents\LivewirePowerGrid\Facades\PowerGrid;
 use PowerComponents\LivewirePowerGrid\PowerGridFields;
 use PowerComponents\LivewirePowerGrid\PowerGridComponent;
@@ -15,10 +13,13 @@ use PowerComponents\LivewirePowerGrid\PowerGridComponent;
 final class StatusAjuanTable extends PowerGridComponent
 {
     public string $tableName = 'status-ajuan-table-u2v8u0-table';
+    public string $sortField = 'created_at';
+    public string $sortDirection = 'desc';
+    public bool $withSortStringNumber = true;
 
     public function setUp(): array
     {
-        $this->showCheckBox();
+        // $this->showCheckBox();
 
         return [
             PowerGrid::header()
@@ -44,35 +45,31 @@ final class StatusAjuanTable extends PowerGridComponent
         return PowerGrid::fields()
             ->add('id')
             ->add('nama_status_ajuan')
-            ->add('urutan_ajuan')
-            ->add('input_type')
-            ->add('created_at');
+            ->add('urutan_ajuan');
+        // ->add('input_type')
+        // ->add('created_at');
     }
 
     public function columns(): array
     {
         return [
-            Column::make('Id', 'id'),
-            Column::make('Nama status ajuan', 'nama_status_ajuan')
-                ->sortable()
+            Column::make('No', 'id')
+                ->index(),
+            Column::make('Nama status', 'nama_status_ajuan')
+                // ->sortable()
                 ->searchable(),
-
             Column::make('Urutan ajuan', 'urutan_ajuan')
                 ->sortable()
                 ->searchable(),
-
-            Column::make('Input type', 'input_type')
-                ->sortable()
-                ->searchable(),
-
-            Column::make('Created at', 'created_at_formatted', 'created_at')
-                ->sortable(),
-
-            Column::make('Created at', 'created_at')
-                ->sortable()
-                ->searchable(),
-
-            Column::action('Action')
+            // Column::make('Input type', 'input_type')
+            //     ->sortable()
+            //     ->searchable(),
+            // Column::make('Created at', 'created_at_formatted', 'created_at')
+            //     ->sortable(),
+            // Column::make('Created at', 'created_at')
+            //     ->sortable()
+            //     ->searchable(),
+            Column::action('#')
         ];
     }
 
@@ -84,7 +81,7 @@ final class StatusAjuanTable extends PowerGridComponent
     // #[\Livewire\Attributes\On('edit')]
     // public function edit($rowId): void
     // {
-    //     $this->js('alert('.$rowId.')');
+        // $this->js('alert('.$rowId.')');
     // }
 
     public function actions(StatusAjuan $row): array
