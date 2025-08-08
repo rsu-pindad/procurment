@@ -99,11 +99,7 @@ final class UserAjuanTable extends PowerGridComponent
 
     public function filters(): array
     {
-        if (auth()->user()->units_id != null) {
-            $data = Unit::find(auth()->user()->units_id);
-            if (auth()->user()->hasRole('pengadaan')) {
-                $data = Unit::all();
-            }
+        if (auth()->user()->hasRole('pengadaan')) {
             return [
                 Filter::datepicker('tanggal_ajuan')
                     ->params([
@@ -116,7 +112,7 @@ final class UserAjuanTable extends PowerGridComponent
                 // Filter::datetimepicker('tanggal_update_terakhir'),
                 // Filter::inputText('units_id')->placeholder('filter unit'),
                 Filter::select('units_id', 'units_id')
-                    ->dataSource($data)
+                    ->dataSource(Unit::all())
                     ->optionLabel('nama_unit')
                     ->optionValue('id'),
                 Filter::select('status_ajuans_id', 'status_ajuans_id')
@@ -125,7 +121,20 @@ final class UserAjuanTable extends PowerGridComponent
                     ->optionValue('id'),
             ];
         } else {
-            return [];
+            return [
+                Filter::datepicker('tanggal_ajuan')
+                    ->params([
+                        // 'locale' => 'id_ID',
+                        'timezone' => 'Asia/Jakarta',
+                        'enableTime' => false,
+                        'enableSeconds' => false,
+                        'dateFormat' => 'd/m/Y'
+                    ]),
+                Filter::select('status_ajuans_id', 'status_ajuans_id')
+                    ->dataSource(StatusAjuan::all())
+                    ->optionLabel('nama_status_ajuan')
+                    ->optionValue('id'),
+            ];
         }
     }
 
