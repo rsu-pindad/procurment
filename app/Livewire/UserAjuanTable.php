@@ -12,6 +12,8 @@ use PowerComponents\LivewirePowerGrid\Facades\PowerGrid;
 use PowerComponents\LivewirePowerGrid\PowerGridFields;
 use PowerComponents\LivewirePowerGrid\PowerGridComponent;
 use \App\Enums\JenisAjuan;
+use App\Models\Admin\StatusAjuan;
+use App\Models\Admin\Unit;
 
 final class UserAjuanTable extends PowerGridComponent
 {
@@ -20,9 +22,14 @@ final class UserAjuanTable extends PowerGridComponent
     public string $sortDirection = 'desc';
     public bool $withSortStringNumber = true;
 
+    public function boot(): void
+    {
+        config(['livewire-powergrid.filter' => 'inline']);
+    }
+
     public function setUp(): array
     {
-        $this->showCheckBox();
+        // $this->showCheckBox();
 
         return [
             PowerGrid::header()
@@ -92,9 +99,29 @@ final class UserAjuanTable extends PowerGridComponent
 
     public function filters(): array
     {
+        $data = Unit::find(auth()->user()->units_id);
+        if (auth()->user()->hasRole('pengadaan')) {
+            $data = Unit::all();
+        }
         return [
-            Filter::datepicker('tanggal_ajuan'),
-            Filter::datetimepicker('tanggal_update_terakhir'),
+            Filter::datepicker('tanggal_ajuan')
+            ->params([
+                // 'locale' => 'id_ID',
+                'timezone' => 'Asia/Jakarta',
+                'enableTime' => false,
+                'enableSeconds' => false,
+                'dateFormat' => 'd/m/Y'
+            ]),
+            // Filter::datetimepicker('tanggal_update_terakhir'),
+            // Filter::inputText('units_id')->placeholder('filter unit'),
+            Filter::select('units_id', 'units_id')
+                ->dataSource($data)
+                ->optionLabel('nama_unit')
+                ->optionValue('id'),
+            Filter::select('status_ajuans_id', 'status_ajuans_id')
+                ->dataSource(StatusAjuan::all())
+                ->optionLabel('nama_status_ajuan')
+                ->optionValue('id'),
         ];
     }
 
@@ -134,8 +161,8 @@ final class UserAjuanTable extends PowerGridComponent
                         ->class('pg-btn-white')
                         ->id('edit')
                         // ->attributes([
-                            // 'id' => 'edit-' . $row->id,
-                            // 'class' => 'pg-btn-white text-blue-500'
+                        // 'id' => 'edit-' . $row->id,
+                        // 'class' => 'pg-btn-white text-blue-500'
                         // ])
                         ->route('ajuan.edit', ['ajuan' => $row->id])
                         ->navigate(),
