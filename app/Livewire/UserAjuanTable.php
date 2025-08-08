@@ -12,7 +12,6 @@ use PowerComponents\LivewirePowerGrid\Facades\PowerGrid;
 use PowerComponents\LivewirePowerGrid\PowerGridFields;
 use PowerComponents\LivewirePowerGrid\PowerGridComponent;
 use \App\Enums\JenisAjuan;
-// use PowerComponents\LivewirePowerGrid\Facades\Rule;
 
 final class UserAjuanTable extends PowerGridComponent
 {
@@ -99,38 +98,65 @@ final class UserAjuanTable extends PowerGridComponent
         ];
     }
 
-    #[\Livewire\Attributes\On('edit')]
-    public function edit($rowId): void
+    #[\Livewire\Attributes\On('hapus')]
+    public function hapus($rowId)
     {
-        $this->js('alert(' . $rowId . ')');
+        // $this->dispatch('confirm-hapus', rowId:$rowId);
+        $pesan = '';
+        try {
+            $ajuan = Ajuan::find($rowId);
+            $ajuan->delete();
+            if ($ajuan) {
+                $pesan = 'Ajuan berhasil dihapus';
+            }
+            $this->dispatch('info-hapus', message: $pesan);
+        } catch (\Throwable $th) {
+            $this->dispatch('info-hapus', message: $th->getMessage());
+        }
     }
 
     public function actions(Ajuan $row): array
     {
         $button = [
-            Button::add('detail')
+            Button::make('detail')
                 ->slot('Detail')
                 ->class('pg-btn-white')
                 ->route('ajuan.detail', ['ajuan' => $row->id])
                 ->navigate(),
+            // ->target('_self')
         ];
-
         if (auth()->user()->hasRole('pengadaan', true)) {
-            $button = array_merge($button, [
-                Button::add('edit')
-                    ->slot('Edit')
-                    ->attributes([
-                        'id' => 'edit-'.$row->id,
-                        'class' => 'pg-btn-white text-blue-500'
-                    ])
-                    ->route('ajuan.edit', ['ajuan' => $row->id])
-                    ->navigate()
-            ]);
+            $button = array_merge(
+                $button,
+                [
+                    Button::add('edit')
+                        ->slot('Edit')
+                        ->class('pg-btn-white')
+                        ->id('edit')
+                        // ->attributes([
+                            // 'id' => 'edit-' . $row->id,
+                            // 'class' => 'pg-btn-white text-blue-500'
+                        // ])
+                        ->route('ajuan.edit', ['ajuan' => $row->id])
+                        ->navigate(),
+                ],
+                [
+                    Button::add('hapus')
+                        ->slot('Hapus')
+                        // ->icon('default-eye', ['class' => 'font-bold'])
+                        ->class('pg-btn-white')
+                        ->id('hapus')
+                        // ->attributes([
+                        // 'id' => 'hapus-' . $row->id,
+                        // 'class' => 'pg-btn-white text-red-500'
+                        // ])
+                        ->confirm('hapus ajuan?')
+                        ->dispatch('hapus', ['rowId' => $row->id])
+                ]
+            );
         }
-
         return $button;
     }
-
 
     // public function actionRules($row): array
     // {
