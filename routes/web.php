@@ -21,7 +21,6 @@ Route::middleware(['auth'])->group(function () {
     Route::group(['middleware' => ['role:admin']], function () {
         Route::view('unit', 'unit')->name('unit');
         Route::view('kategori', 'kategori')->name('kategori');
-        Route::view('status-ajuan', 'status-ajuan')->name('status-ajuan');
     });
 
     Route::group(['middleware' => ['role:pengadaan|pegawai']], function () {
@@ -39,11 +38,15 @@ Route::middleware(['auth'])->group(function () {
             ->name('analisa.show');
     });
 
+    Route::group(['middleware' => 'role:pengadaan|admin'], function () {
+        Route::view('status-ajuan', 'status-ajuan')->name('status-ajuan');
+    });
+
     Route::group(['middleware' => ['role:pengadaan|pegawai']], function () {
         Route::view('monitor', 'monitor')->name('monitor');
     });
 
-    Route::group(['prefix' =>'management'], function(){
+    Route::group(['prefix' => 'management'], function () {
         Route::view('user', 'management.user')->name('management.user');
         Volt::route('user/unit/{user}', 'user.management-unit')->name('management.user.unit');
     });
