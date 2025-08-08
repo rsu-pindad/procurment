@@ -18,7 +18,6 @@ new #[Layout('components.layouts.app')] #[Title('detail pengajuan')] class exten
     public $confirmedStatusPengajuan = null;
     public $reasonAjuan = null;
     public $statusAjuanOptions = [];
-
     public $selectedVendor;
     public $hpsNego = 0;
     public bool $showHpsNego = false;
@@ -37,13 +36,15 @@ new #[Layout('components.layouts.app')] #[Title('detail pengajuan')] class exten
         $this->ajuan = $ajuan;
         $this->loadData();
         $this->loadReasonData();
-
         $this->confirmedStatusPengajuan = $ajuan->status_ajuans_id;
         $this->statusPengajuan = $this->confirmedStatusPengajuan;
         $this->statusAjuanOptions = $this->getStatusAjuanOptions();
-
-        // preload vendors only if needed
         $this->vendors = [];
+    }
+
+    public function getUrutanStatusProperty(): bool
+    {
+        return $this->ajuan->status_ajuan->urutan_ajuan == 0;
     }
 
     public function updatedHpsNego($value)
@@ -66,36 +67,25 @@ new #[Layout('components.layouts.app')] #[Title('detail pengajuan')] class exten
             $this->reset(['uploadedFile', 'tanggalRealisasi', 'textInputTambahan', 'selectedVendor']);
             return;
         }
-
-        // Cache StatusAjuan find result to avoid duplicate queries
         $this->cachedSelectedStatus = StatusAjuan::find($value);
-
         if ($this->cachedSelectedStatus && $this->cachedSelectedStatus->input_type === InputType::SELECT_INPUT) {
             $this->vendors = \App\Models\Admin\Vendor::all();
         } else {
             $this->vendors = [];
         }
-
         $this->showHpsNego = true;
-
-        // Reset input tambahan lainnya (opsional)
         $this->reset(['uploadedFile', 'tanggalRealisasi', 'textInputTambahan', 'selectedVendor']);
     }
 
     protected function loadData()
     {
         $this->audit = $this->ajuan->audits()->with('user')->get();
-
-        // Ambil last history dengan eager loading pivot
         $this->histories = $this->ajuan->statusHistories()->orderByDesc('created_at')->withPivot('realisasi')->first();
-
         if ($this->histories && $this->histories->pivot?->realisasi) {
             $realisasiDate = carbon($this->histories->pivot->realisasi)->startOfDay();
             $today = now()->startOfDay();
-
             $this->realisasiTanggal = $realisasiDate->translatedFormat('d F Y');
             $selisih = $realisasiDate->diffInDays($today, false);
-
             $this->realisasiSelisih = match (true) {
                 $selisih === 0 => 'hari ini',
                 $selisih > 0 => "$selisih hari yang lalu dari",
@@ -150,22 +140,16 @@ new #[Layout('components.layouts.app')] #[Title('detail pengajuan')] class exten
     {
         $allStatuses = $this->allStatuses;
         $passedStatusIds = $this->passedStatusIds;
-
-        // Gunakan confirmedStatusPengajuan yang sudah disimpan
         $lastStatusId = (int) $this->confirmedStatusPengajuan;
-
         $groupedAudit = $this->groupedAudit;
-
         return $allStatuses->map(function ($status) use ($passedStatusIds, $lastStatusId, $groupedAudit) {
             $isPassed = $passedStatusIds->contains($status->id);
             $isCurrent = (int) $status->id === $lastStatusId;
-
             $circleColor = match (true) {
                 $isCurrent => 'bg-green-600',
                 $isPassed => 'bg-blue-600',
                 default => 'bg-gray-400',
             };
-
             return [
                 'id' => (int) $status->id,
                 'name' => $status->nama_status_ajuan,
@@ -181,11 +165,9 @@ new #[Layout('components.layouts.app')] #[Title('detail pengajuan')] class exten
     {
         $allStatuses = $this->allStatuses;
         $lastStatusId = $this->ajuan->status_ajuans_id;
-
         $total = max($allStatuses->count() - 1, 1);
         $lastIndex = $allStatuses->search(fn ($s) => $s->id == $lastStatusId);
         $progressPercent = ($lastIndex / $total) * 100;
-
         return [
             'total' => $total,
             'progressPercent' => $progressPercent,
@@ -195,8 +177,6 @@ new #[Layout('components.layouts.app')] #[Title('detail pengajuan')] class exten
     public function refreshStatusData()
     {
         $this->loadData();
-
-        // Update confirmedStatusPengajuan agar konsisten
         $this->ajuan->refresh();
         $this->confirmedStatusPengajuan = $this->ajuan->status_ajuans_id;
         $this->statusPengajuan = $this->confirmedStatusPengajuan;
@@ -207,7 +187,6 @@ new #[Layout('components.layouts.app')] #[Title('detail pengajuan')] class exten
         if (!$this->ajuan->status_ajuan) {
             return collect([]);
         }
-
         return StatusAjuan::where('urutan_ajuan', '<=', $this->ajuan->status_ajuan->urutan_ajuan + 1)
             ->orderBy('urutan_ajuan')
             ->get();
@@ -218,50 +197,37 @@ new #[Layout('components.layouts.app')] #[Title('detail pengajuan')] class exten
         $data = [
             'status_ajuans_id' => $this->statusPengajuan,
         ];
-
         if ($this->selectedVendor !== null) {
             $data['vendor_id'] = $this->selectedVendor;
         }
-
         if ($this->hpsNego !== 0) {
             $data['hps_nego'] = $this->hpsNego;
         }
-
         $update = $this->ajuan->update($data);
-
         $storeReason = new \App\Models\Admin\ReasonAjuan();
         $storeReason->ajuan_id = $this->ajuan->id;
         $storeReason->status_ajuan_id = $this->statusPengajuan;
         $storeReason->created_by = auth()->id();
         $storeReason->reason_keterangan_ajuan = $this->reasonAjuan;
         $storeReason->save();
-
         if ($update && $storeReason) {
             $this->reset('reasonAjuan');
-
             $this->loadData();
-
-            $this->ajuan->refresh(); // Refresh relasi dan data ajuan
+            $this->ajuan->refresh();
             $this->loadReasonData();
-
             $this->confirmedStatusPengajuan = $this->ajuan->status_ajuans_id;
             $this->statusPengajuan = $this->confirmedStatusPengajuan;
             $this->statusAjuanOptions = $this->getStatusAjuanOptions();
-
             $this->dispatch('updated-status');
         }
     }
 
     public function getSelectedInputTypeProperty()
     {
-        // Reuse cached status if sudah ada, untuk menghindari query berulang
         if ($this->cachedSelectedStatus && $this->cachedSelectedStatus->id === $this->statusPengajuan) {
             return $this->cachedSelectedStatus->input_type;
         }
-
-        // Jika belum cache, cari dan cache
         $this->cachedSelectedStatus = StatusAjuan::find($this->statusPengajuan);
-
         return $this->cachedSelectedStatus?->input_type;
     }
 };
@@ -292,11 +258,10 @@ new #[Layout('components.layouts.app')] #[Title('detail pengajuan')] class exten
                 <div class="px-4 py-5">
                     <x-ajuan.timeline-summary :produk-ajuan="$this->ajuan->produk_ajuan" :produk="$this->ajuan" :histories="$histories" :realisasiTanggal="$realisasiTanggal" :realisasiSelisih="$realisasiSelisih" />
                 </div>
-
+                @if(!$this->urutanStatus)
                 <!-- Timeline Progress -->
                 <div class="px-4 py-5">
-                    <h3 class="text-sm font-semibold text-gray-800 mb-6">Progress Status
-                        ({{ round($this->timelineData['progressPercent']) }}%)</h3>
+                    <h3 class="text-sm font-semibold text-gray-800 mb-6">Progress Status ({{ round($this->timelineData['progressPercent']) }}%)</h3>
                     <div class="overflow-x-auto max-h-48 overflow-y-auto">
                         <div class="relative min-w-[640px] w-max">
                             <!-- Garis latar -->
@@ -309,13 +274,15 @@ new #[Layout('components.layouts.app')] #[Title('detail pengajuan')] class exten
                             <!-- Status Items -->
                             <div class="flex justify-between relative z-10 mt-6 space-x-4 sm:space-x-6 px-2 sm:px-4">
                                 @foreach ($this->statusViewModels as $status)
+                                @if(!$loop->first)
                                 <x-timeline-status :status="$status" />
+                                @endif
                                 @endforeach
                             </div>
                         </div>
                     </div>
-
                 </div>
+                @endif
 
                 @if (auth()->user()->hasRole('pengadaan'))
                 <!-- Form Konfirmasi Status -->

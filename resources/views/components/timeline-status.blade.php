@@ -5,7 +5,6 @@
     <div class="w-5 h-5 top-2 rounded-full border-2 border-gray-200 shadow-md {{ $status['color'] }}"
         title="{{ $status['name'] }}" style="margin-bottom: 8px; position: relative;">
     </div>
-
     <!-- Status Info (teks) -->
     <div class="space-y-1" style="min-height: 4rem;">
         <p class="text-sm font-medium text-gray-800">{{ $status['name'] }}</p>
