@@ -144,7 +144,7 @@ new class extends Component
 
     public function inform()
     {
-        // ini untuk user menginfikan ke pengadaan
+        // ini untuk user menginfokan ke pengadaan
         \App\Models\User::withRole('pengadaan')
             ->get()
             ->each(function ($pengadaan) use ($ajuan) {
@@ -288,12 +288,10 @@ new class extends Component
                     <x-input-error class="mt-2" :messages="$errors->get('realisasi')" />
                 </div>
             </div>
-
-            <!-- Tombol submit di luar grid, di bawah -->
             <div class="mt-6 flex items-center gap-4">
-                <x-primary-button>{{ __('Ajukan') }}</x-primary-button>
+                <x-primary-button>@svg('heroicon-o-paper-airplane','w-5 h-5 mr-2'){{ __('Ajukan') }}</x-primary-button>
                 <x-action-message class="me-3" on="modal-stored">
-                    {{ __('Pengajuan dikirim.') }}
+                {{ __('Pengajuan dikirim.') }}
                 </x-action-message>
             </div>
         </form>

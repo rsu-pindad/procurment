@@ -1,4 +1,9 @@
 <x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            {{ __('Ajuan') }}
+        </h2>
+    </x-slot>
     @if (auth()->user()->hasRole('pengadaan'))
     <div class="py-4 sm:py-6">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
@@ -20,7 +25,7 @@
             </div>
         </div>
     </div>
-    <livewire:ajuan.ajuan-utility />
+    <!-- <livewire_ajuan.ajuan-utility> -->
     @endif
     <div class="py-4 sm:py-6">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
@@ -69,6 +74,12 @@
                     message: event.message
                 });
                 Livewire.dispatch('pg:eventRefresh-user-ajuan-table-z2bm8x-table');
+            });
+            Livewire.on('modal-stored', (event) => {
+                notyf.open({
+                    type: 'success',
+                    message: 'Pengajuan berhasil dikirim.'
+                });
             });
         });
     </script>
