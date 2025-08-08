@@ -99,30 +99,34 @@ final class UserAjuanTable extends PowerGridComponent
 
     public function filters(): array
     {
-        $data = Unit::find(auth()->user()->units_id);
-        if (auth()->user()->hasRole('pengadaan')) {
-            $data = Unit::all();
+        if (auth()->user()->units_id != null) {
+            $data = Unit::find(auth()->user()->units_id);
+            if (auth()->user()->hasRole('pengadaan')) {
+                $data = Unit::all();
+            }
+            return [
+                Filter::datepicker('tanggal_ajuan')
+                    ->params([
+                        // 'locale' => 'id_ID',
+                        'timezone' => 'Asia/Jakarta',
+                        'enableTime' => false,
+                        'enableSeconds' => false,
+                        'dateFormat' => 'd/m/Y'
+                    ]),
+                // Filter::datetimepicker('tanggal_update_terakhir'),
+                // Filter::inputText('units_id')->placeholder('filter unit'),
+                Filter::select('units_id', 'units_id')
+                    ->dataSource($data)
+                    ->optionLabel('nama_unit')
+                    ->optionValue('id'),
+                Filter::select('status_ajuans_id', 'status_ajuans_id')
+                    ->dataSource(StatusAjuan::all())
+                    ->optionLabel('nama_status_ajuan')
+                    ->optionValue('id'),
+            ];
+        } else {
+            return [];
         }
-        return [
-            Filter::datepicker('tanggal_ajuan')
-            ->params([
-                // 'locale' => 'id_ID',
-                'timezone' => 'Asia/Jakarta',
-                'enableTime' => false,
-                'enableSeconds' => false,
-                'dateFormat' => 'd/m/Y'
-            ]),
-            // Filter::datetimepicker('tanggal_update_terakhir'),
-            // Filter::inputText('units_id')->placeholder('filter unit'),
-            Filter::select('units_id', 'units_id')
-                ->dataSource($data)
-                ->optionLabel('nama_unit')
-                ->optionValue('id'),
-            Filter::select('status_ajuans_id', 'status_ajuans_id')
-                ->dataSource(StatusAjuan::all())
-                ->optionLabel('nama_status_ajuan')
-                ->optionValue('id'),
-        ];
     }
 
     #[\Livewire\Attributes\On('hapus')]
