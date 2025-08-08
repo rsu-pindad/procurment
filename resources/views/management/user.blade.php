@@ -7,6 +7,7 @@
                         Berikut adalah daftar user yang tersedia dengan detail informasi terkait masing-masing user.
                     </x-section-header>
                     <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
+                        <livewire:user.management-form />
                     </div>
                 </div>
                 <div class="mt-4 flow-root">
