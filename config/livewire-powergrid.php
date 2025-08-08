@@ -54,6 +54,12 @@ return [
                     'enableTime' => true,
                     'time_24hr'  => true,
                 ],
+                'us' => [
+                    'locale'     => 'us',
+                    'dateFormat' => 'm/d/Y',
+                    'enableTime' => true,
+                    'time_24hr'  => false,
+                ],
             ],
         ],
 
