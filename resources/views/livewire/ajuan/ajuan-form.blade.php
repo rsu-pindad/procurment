@@ -213,13 +213,7 @@ new class extends Component
 ?>
 
 <section>
-    <x-slot name="header">
-        <h2 class="font-semibold text-lg text-gray-800 leading-tight">
-            {{ __('Ajuan') }}
-        </h2>
-    </x-slot>
-
-    <div class="p-4 space-y-4">
+    <div class="py-4 sm:py-6">
         <form wire:submit="store">
             <!-- Grid untuk input fields -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">

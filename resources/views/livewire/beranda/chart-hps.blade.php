@@ -110,14 +110,14 @@ new class extends Component
         </x-section-header>
     </div>
     <div class="flex flex-col sm:flex-row flex-wrap gap-2 mb-4 pb-2 border-b-2 border-slate-200">
-        <x-secondary-button class="w-full sm:w-auto border-green-500 hover:bg-green-50 hover:text-green-500" wire:click="exportDataExcel">
+        <x-secondary-button class="w-full sm:w-auto border-green-600 hover:bg-green-50 hover:text-green-600" wire:click="exportDataExcel">
             @svg('heroicon-o-document-arrow-down', 'size-5 mr-2 text-green-600')XLSX
         </x-secondary-button>
-        <x-secondary-button class="w-full sm:w-auto border-red-500 hover:bg-red-50 hover:text-red-500" wire:click="exportDataPdf">
+        <x-secondary-button class="w-full sm:w-auto border-red-600 hover:bg-red-50 hover:text-red-600" wire:click="exportDataPdf">
             @svg('heroicon-o-document-arrow-down', 'size-5 mr-2 text-red-600')PDF
         </x-secondary-button>
-        <x-secondary-button class="w-full sm:w-auto border-blue-500 hover:bg-blue-50 hover:text-blue-500" id="export-chart-btn">
-            @svg('heroicon-o-document-chart-bar', 'size-5 mr-2 text-blue-600')Chart
+        <x-secondary-button class="w-full sm:w-auto border-yellow-600 hover:bg-yellow-50 hover:text-yellow-600" id="export-chart-btn">
+            @svg('heroicon-o-document-chart-bar', 'size-5 mr-2 text-yellow-600')Chart
         </x-secondary-button>
     </div>
     <div class="mb-4">

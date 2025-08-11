@@ -1,17 +1,11 @@
 <div class="max-w-7xl bg-white rounded-md shadow border border-gray-200 p-5">
-    <span class="inline-flex items-center gap-2 rounded-full bg-gray-100 px-2.5 py-1 text-xs font-semibold text-gray-800">
-        <svg class="h-3 w-3 fill-gray-600" role="img" aria-hidden="true" viewBox="0 0 6 6">
-            <circle cx="3" cy="3" r="3" />
-        </svg>
-        Ajuan
+    <span class="inline-flex items-center gap-2 rounded-full bg-gray-100 py-2 px-3 text-md font-semibold uppercase text-gray-800">
+        @svg('heroicon-o-document-text', 'h-5 w-5 mr-2 inline-flex')
+        {{ $produkAjuan }}
     </span>
 
-    <h4 class="mt-3 text-lg font-semibold text-gray-900">
-        {{ $produkAjuan }}
-    </h4>
-
     @if ($histories && $realisasiTanggal && $realisasiSelisih)
-    <div class="mt-3 text-base text-gray-700">
+    <div class="mt-3 text-base text-gray-700 gap-y-2">
         <p class="font-semibold">Estimasi realisasi menuju delivery:</p>
         <p>
             <span class=" text-gray-900">{{ $realisasiSelisih }}</span>
@@ -20,20 +14,18 @@
     </div>
     @endif
     @if (auth()->user()->hasRole('pengadaan'))
-    <div class="mt-3 text-sm text-gray-600 flex flex-row">
-        <ul class="grow">
+    <div class="mt-3 text-sm text-gray-600 flex flex-row gap-y-2">
+        <ul class="grow space-y-2">
             <li>tanggal pengajuan : {{ $produk->tanggal_ajuan }}</li>
             <li>hps : {{ number_format($produk->hps,2, ',', '.') }}</li>
             <li>spefifikasi : {{ $produk->spesifikasi }}</li>
             <li>unit : {{ $produk->unit->nama_unit }}</li>
         </ul>
         <ul class="grow divide-y divide-gray-100 rounded-md border border-gray-200" role="list">
-            <li class="flex items-center justify-between py-2 pl-4 pr-5 text-sm/6">{{ $produk->jenis_ajuan }}</li>
+            <li class="flex items-center justify-between py-2 pl-4 pr-5 text-base bg-blue-200 font-semibold">{{ $produk->jenis_ajuan }}</li>
             <li class="flex items-center justify-between py-2 pl-4 pr-5 text-sm/6">
                 <div class="flex w-0 flex-1 items-center">
-                    <svg class="size-5 shrink-0 text-gray-400" aria-hidden="true" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M15.621 4.379a3 3 0 0 0-4.242 0l-7 7a3 3 0 0 0 4.241 4.243h.001l.497-.5a.75.75 0 0 1 1.064 1.057l-.498.501-.002.002a4.5 4.5 0 0 1-6.364-6.364l7-7a4.5 4.5 0 0 1 6.368 6.36l-3.455 3.553A2.625 2.625 0 1 1 9.52 9.52l3.45-3.451a.75.75 0 1 1 1.061 1.06l-3.45 3.451a1.125 1.125 0 0 0 1.587 1.595l3.454-3.553a3 3 0 0 0 0-4.242Z" clip-rule="evenodd" />
-                    </svg>
+                    @svg('heroicon-c-paper-clip', 'w-5 h-5 text-gray-400 inline-flex')
                     <div class="ml-4 flex min-w-0 flex-1 gap-2">
                         <span class="truncate font-medium">
                             {{ $produk->file_rab ? basename($produk->file_rab) : '-' }}
@@ -48,9 +40,7 @@
             </li>
             <li class="flex items-center justify-between py-2 pl-4 pr-5 text-sm/6">
                 <div class="flex w-0 flex-1 items-center">
-                    <svg class="size-5 shrink-0 text-gray-400" aria-hidden="true" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M15.621 4.379a3 3 0 0 0-4.242 0l-7 7a3 3 0 0 0 4.241 4.243h.001l.497-.5a.75.75 0 0 1 1.064 1.057l-.498.501-.002.002a4.5 4.5 0 0 1-6.364-6.364l7-7a4.5 4.5 0 0 1 6.368 6.36l-3.455 3.553A2.625 2.625 0 1 1 9.52 9.52l3.45-3.451a.75.75 0 1 1 1.061 1.06l-3.45 3.451a1.125 1.125 0 0 0 1.587 1.595l3.454-3.553a3 3 0 0 0 0-4.242Z" clip-rule="evenodd" />
-                    </svg>
+                    @svg('heroicon-c-paper-clip', 'w-5 h-5 text-gray-400 inline-flex')
                     <div class="ml-4 flex min-w-0 flex-1 gap-2">
                         <span class="truncate font-medium">
                             {{ $produk->file_nota_dinas ? basename($produk->file_nota_dinas) : '-' }}
@@ -65,9 +55,7 @@
             </li>
             <li class="flex items-center justify-between py-2 pl-4 pr-5 text-sm/6">
                 <div class="flex w-0 flex-1 items-center">
-                    <svg class="size-5 shrink-0 text-gray-400" aria-hidden="true" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M15.621 4.379a3 3 0 0 0-4.242 0l-7 7a3 3 0 0 0 4.241 4.243h.001l.497-.5a.75.75 0 0 1 1.064 1.057l-.498.501-.002.002a4.5 4.5 0 0 1-6.364-6.364l7-7a4.5 4.5 0 0 1 6.368 6.36l-3.455 3.553A2.625 2.625 0 1 1 9.52 9.52l3.45-3.451a.75.75 0 1 1 1.061 1.06l-3.45 3.451a1.125 1.125 0 0 0 1.587 1.595l3.454-3.553a3 3 0 0 0 0-4.242Z" clip-rule="evenodd" />
-                    </svg>
+                    @svg('heroicon-c-paper-clip', 'w-5 h-5 text-gray-400 inline-flex')
                     <div class="ml-4 flex min-w-0 flex-1 gap-2">
                         <span class="truncate font-medium">
                             {{ $produk->file_analisa_kajian ? basename($produk->file_analisa_kajian) : '-' }}

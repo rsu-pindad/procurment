@@ -31,7 +31,8 @@ new class extends Component
         $userId = (int) $this->id;
         $unit = (int) $value;
         $pegawai = User::find($userId)->update(['unit_id' => $unit]);
-        $this->js("alert('Unit berhasil dipilih')");
+        // $this->js("alert('Unit berhasil dipilih')");
+        $this->dispatch('updated-user-unit');
     }
 
     public function goBack(): void
@@ -46,8 +47,7 @@ new class extends Component
             {{ __('Management User Unit') }}
         </h2>
     </x-slot>
-
-    <div class="py-12">
+    <div class="py-5 sm:py-6">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
             <div class="p-6 bg-white shadow-md sm:rounded-lg">
                 <!-- Header -->
@@ -55,8 +55,8 @@ new class extends Component
                     <x-section-header title="User Unit">
                         Berikut adalah user unit yang tersedia dengan detail informasi lengkap.
                     </x-section-header>
-                    <button class="mt-4 sm:mt-0 px-4 py-2 bg-gray-100 text-sm text-gray-700 rounded-md hover:bg-gray-200 transition" wire:click="goBack">
-                        ← Kembali
+                    <button class="mt-4 sm:mt-0 px-4 py-2 bg-blue-100 text-sm text-blue-700 rounded-md hover:bg-blue-200 transition" wire:click="goBack">
+                        @svg('heroicon-s-arrow-left', 'w-5 h-5 inline-flex mx-2')
                     </button>
                 </div>
 
@@ -76,3 +76,31 @@ new class extends Component
         </div>
     </div>
 </section>
+
+@pushOnce('customScripts')
+<script type="module">
+    const notyf = new Notyf({
+        duration: 10000,
+        position: {
+            x: 'center',
+            y: 'top',
+        },
+        ripple: true,
+        dismissible: true,
+        types: [{
+            type: 'info',
+            background: 'blue',
+            icon: false
+        }]
+    });
+
+    document.addEventListener('livewire:init', () => {
+        Livewire.on('updated-user-unit', (event) => {
+            notyf.open({
+                type: 'info',
+                message: 'unit user berhasil dipilih.'
+            });
+        });
+    });
+</script>
+@endpushOnce

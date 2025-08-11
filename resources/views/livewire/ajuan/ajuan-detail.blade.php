@@ -237,11 +237,10 @@ new #[Layout('components.layouts.app')] #[Title('detail pengajuan')] class exten
 <section>
     <x-slot name="header">
         <h2 class="font-semibold text-lg text-gray-800 leading-tight">
-            {{ __('Ajuan') }}
+            {{ __('Detail Ajuan') }}
         </h2>
     </x-slot>
-
-    <div class="py-12">
+    <div class="py-4 sm:py-6">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
             <div class="p-6 bg-white shadow-md sm:rounded-lg">
                 <!-- Header -->
@@ -249,11 +248,10 @@ new #[Layout('components.layouts.app')] #[Title('detail pengajuan')] class exten
                     <x-section-header title="Detail Ajuan">
                         Berikut adalah ajuan yang tersedia dengan detail informasi lengkap.
                     </x-section-header>
-                    <button class="mt-4 sm:mt-0 px-4 py-2 bg-gray-100 text-sm text-gray-700 rounded-md hover:bg-gray-200 transition" wire:click="goBack">
-                        ← Kembali
+                    <button class="mt-4 sm:mt-0 px-4 py-2 bg-blue-100 text-sm text-blue-700 rounded-md hover:bg-blue-200 transition" wire:click="goBack">
+                        @svg('heroicon-s-arrow-left', 'w-5 h-5 inline-flex mx-2')
                     </button>
                 </div>
-
                 <!-- Timeline Summary -->
                 <div class="px-4 py-5">
                     <x-ajuan.timeline-summary :produk-ajuan="$this->ajuan->produk_ajuan" :produk="$this->ajuan" :histories="$histories" :realisasiTanggal="$realisasiTanggal" :realisasiSelisih="$realisasiSelisih" />
@@ -266,11 +264,9 @@ new #[Layout('components.layouts.app')] #[Title('detail pengajuan')] class exten
                         <div class="relative min-w-[640px] w-max">
                             <!-- Garis latar -->
                             <div class="absolute top-4 left-0 w-full h-1 bg-gray-200 rounded-full"></div>
-
                             <!-- Garis aktif -->
                             <div class="absolute top-4 left-0 h-1 bg-green-500 rounded-full transition-all duration-700 ease-in-out" style="width: {{ $this->timelineData['progressPercent'] }}%;">
                             </div>
-
                             <!-- Status Items -->
                             <div class="flex justify-between relative z-10 mt-6 space-x-4 sm:space-x-6 px-2 sm:px-4">
                                 @foreach ($this->statusViewModels as $status)
@@ -379,14 +375,31 @@ new #[Layout('components.layouts.app')] #[Title('detail pengajuan')] class exten
             </div>
         </div>
     </div>
-
 </section>
+@pushOnce('customScripts')
+<script type="module">
+    const notyf = new Notyf({
+        duration: 10000,
+        position: {
+            x: 'center',
+            y: 'center',
+        },
+        ripple: true,
+        dismissible: true,
+        types: [{
+            type: 'info',
+            background: 'orange',
+            icon: false
+        }]
+    });
 
-@script
-<script>
-    document.getElementById('statusPengajuan').addEventListener('change', () => {
-        // Livewire.dispatch('exportStatusChartPdf');
-        // console.log('ok');
+    document.addEventListener('livewire:init', () => {
+        Livewire.on('updated-status', (event) => {
+            notyf.open({
+                type: 'info',
+                message: 'Status berhasil dikonfirmasi.'
+            });
+        });
     });
 </script>
-@endscript
+@endpushOnce
