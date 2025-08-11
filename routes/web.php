@@ -28,10 +28,6 @@ Route::middleware(['auth'])->group(function () {
     // role admin dan pengadaan
     Route::group(['middleware' => ['role:admin|pengadaan']], function () {
         Route::view('status-ajuan', 'status-ajuan')->name('status-ajuan');
-    });
-
-    // role pengadaan
-    Route::group(['middleware' => ['role:pengadaan']], function () {
         Route::group(['prefix' => 'management'], function () {
             Route::view('user', 'management.user')->name('management.user');
             Volt::route('user/unit/{user}', 'user.management-unit')->name('management.user.unit');
