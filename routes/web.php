@@ -10,10 +10,14 @@ use App\Http\Controllers\Pengadaan\NodinFileController;
 Broadcast::routes(['middleware' => ['web', 'auth']]);
 
 Route::middleware(['guest'])->group(function () {
-    Route::get('/', function () {
+    // Route::get('/', function () {
+    //     return redirect('/login');
+    // });
+    Route::middleware(['redirect.role'])->get('/', function () {
         return redirect('/login');
     });
 });
+
 
 Route::middleware(['auth'])->group(function () {
     Route::view('dashboard', 'beranda.index')->name('dashboard');
@@ -49,7 +53,11 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/analisa/{filename}', [NodinFileController::class, 'show'])
             ->where('filename', '.*')
             ->name('analisa.show');
-        Route::view('monitor', 'monitor')->name('monitor');
+        // Route::view('monitor', 'monitor')->name('monitor');
+    });
+
+    Route::group(['middleware' => ['role:monitoring']], function(){
+        Route::view('monitor','monitor')->name('monitor');
     });
 });
 
