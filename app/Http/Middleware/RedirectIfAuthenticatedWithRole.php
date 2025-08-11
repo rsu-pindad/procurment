@@ -21,7 +21,7 @@ class RedirectIfAuthenticatedWithRole
             $user = Auth::user();
             $currentRoute = $request->route()?->getName();
             if ($user->hasRole('admin') && $currentRoute !== 'dashboard') {
-                return abort(404);
+                return redirect()->route('dashboard');
             }
             if ($user->hasRole('pengadaan|pegawai') && $currentRoute !== 'dashboard') {
                 return redirect()->route('dashboard');
