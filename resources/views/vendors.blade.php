@@ -20,6 +20,8 @@
                 <div class="mt-4 flow-root">
                     <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                         <div class="inline-block min-w-full py-2 align-middle sm:px-4 lg:px-6">
+                            <livewire:vendors-table/>
+                            <livewire:admin.vendors.vendors-manager />
                         </div>
                     </div>
                 </div>

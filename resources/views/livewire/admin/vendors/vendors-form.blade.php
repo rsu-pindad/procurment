@@ -31,7 +31,7 @@ new class extends Component
         $vendor->save();
         $this->reset();
         $this->dispatch('vendor-stored', name: $vendor->nama_vendor);
-        $this->dispatch('pg:eventRefresh-vendors-table-ffgqhz-table');
+        $this->dispatch('pg:eventRefresh-vendors-table-mqwokz-table');
     }
 }; ?>
 
