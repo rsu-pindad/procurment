@@ -21,7 +21,7 @@ final class UserTable extends PowerGridComponent
 
     public function setUp(): array
     {
-        $this->showCheckBox();
+        // $this->showCheckBox();
 
         return [
             PowerGrid::header()
@@ -58,7 +58,7 @@ final class UserTable extends PowerGridComponent
         return [
             Column::make('No', 'id')
                 ->index(),
-            Column::make('Name', 'name')
+            Column::make('Nama', 'name')
                 ->sortable()
                 ->searchable(),
 
