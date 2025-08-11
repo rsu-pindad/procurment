@@ -17,7 +17,7 @@ final class UnitTable extends PowerGridComponent
 
     public function setUp(): array
     {
-        $this->showCheckBox();
+        // $this->showCheckBox();
 
         return [
             PowerGrid::header()
