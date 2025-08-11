@@ -19,6 +19,11 @@ final class UserTable extends PowerGridComponent
     public string $sortDirection = 'desc';
     public bool $withSortStringNumber = true;
 
+    public function boot(): void
+    {
+        config(['livewire-powergrid.filter' => 'inline']);
+    }
+
     public function setUp(): array
     {
         // $this->showCheckBox();
@@ -35,13 +40,18 @@ final class UserTable extends PowerGridComponent
     public function datasource(): Builder
     {
         return User::with('unit')->whereHas('roles', function ($query) {
-            $query->where('name', 'pegawai');
+            $query->whereNot('name', 'admin');
         });
     }
 
     public function relationSearch(): array
     {
-        return [];
+        return [
+            Filter::select('units_id', 'units_id')
+                ->dataSource(Unit::all())
+                ->optionLabel('nama_unit')
+                ->optionValue('id'),
+        ];
     }
 
     public function fields(): PowerGridFields
@@ -85,18 +95,36 @@ final class UserTable extends PowerGridComponent
 
     public function actions(User $row): array
     {
-        return [
+        $button = [
+            Button::add('unit')
+                ->slot('Unit')
+                ->class('pg-btn-white dark:ring-pg-primary-600 dark:border-pg-primary-600 dark:hover:bg-pg-primary-700 dark:ring-offset-pg-primary-800 dark:text-pg-primary-300 dark:bg-pg-primary-700')
+                ->route('manajemen.user.unit', ['user' => $row->id])
+                ->navigate()
+        ];
+        if(auth()->user()->hasRole('admin')){
+            $button = array_merge(
+                $button,[
+                Button::add('Role')
+                ->slot('Role')
+                ->class('pg-btn-white dark:ring-pg-primary-600 dark:border-pg-primary-600 dark:hover:bg-pg-primary-700 dark:ring-offset-pg-primary-800 dark:text-pg-primary-300 dark:bg-pg-primary-700')
+                ->route('manajemen.user.role', ['user' => $row->id])
+                ->navigate()],
+            );
+        }
+        // return [
             // Button::add('edit')
             //     ->slot('Edit: ' . $row->id)
             //     ->id()
             //     ->class('pg-btn-white dark:ring-pg-primary-600 dark:border-pg-primary-600 dark:hover:bg-pg-primary-700 dark:ring-offset-pg-primary-800 dark:text-pg-primary-300 dark:bg-pg-primary-700')
             //     ->dispatch('edit', ['rowId' => $row->id])
-            Button::add('unit')
-            ->slot('Unit')
-            ->class('pg-btn-white dark:ring-pg-primary-600 dark:border-pg-primary-600 dark:hover:bg-pg-primary-700 dark:ring-offset-pg-primary-800 dark:text-pg-primary-300 dark:bg-pg-primary-700')
-            ->route('management.user.unit', ['user' => $row->id])
-            ->navigate(),
-        ];
+            // Button::add('unit')
+            //     ->slot('Unit')
+            //     ->class('pg-btn-white dark:ring-pg-primary-600 dark:border-pg-primary-600 dark:hover:bg-pg-primary-700 dark:ring-offset-pg-primary-800 dark:text-pg-primary-300 dark:bg-pg-primary-700')
+            //     ->route('manajemen.user.unit', ['user' => $row->id])
+            //     ->navigate(),
+        // ];
+        return $button;
     }
 
     /*
