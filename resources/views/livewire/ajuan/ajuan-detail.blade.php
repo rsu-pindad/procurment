@@ -376,30 +376,3 @@ new #[Layout('components.layouts.app')] #[Title('detail pengajuan')] class exten
         </div>
     </div>
 </section>
-@pushOnce('customScripts')
-<script type="module">
-    const notyf = new Notyf({
-        duration: 10000,
-        position: {
-            x: 'center',
-            y: 'center',
-        },
-        ripple: true,
-        dismissible: true,
-        types: [{
-            type: 'info',
-            background: 'orange',
-            icon: false
-        }]
-    });
-
-    document.addEventListener('livewire:init', () => {
-        Livewire.on('updated-status', (event) => {
-            notyf.open({
-                type: 'info',
-                message: 'Status berhasil dikonfirmasi.'
-            });
-        });
-    });
-</script>
-@endpushOnce

@@ -342,31 +342,3 @@ new
         </div>
     </div>
 </section>
-
-@pushOnce('customScripts')
-<script type="module">
-    const notyf = new Notyf({
-        duration: 10000,
-        position: {
-            x: 'center',
-            y: 'center',
-        },
-        ripple: true,
-        dismissible: true,
-        types: [{
-            type: 'info',
-            background: 'orange',
-            icon: false
-        }]
-    });
-
-    document.addEventListener('livewire:init', () => {
-        Livewire.on('modal-edited', (event) => {
-            notyf.open({
-                type: 'success',
-                message: 'Pengajuan berhasil diperbarui.'
-            });
-        });
-    });
-</script>
-@endpushOnce

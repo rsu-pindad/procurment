@@ -204,7 +204,7 @@ new class extends Component
             }
 
             $this->dispatch('modal-stored', name: 'pengajuan');
-            $this->dispatch('pg:eventRefresh-user-ajuan-table-z2bm8x-table');
+            // $this->dispatch('pg:eventRefresh-user-ajuan-table-z2bm8x-table');
             $this->reset();
         }
     }

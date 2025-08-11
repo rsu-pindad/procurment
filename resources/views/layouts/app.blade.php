@@ -74,7 +74,7 @@
                     message: e.message
                 });
                 Livewire.dispatch(livewireEvent, e);
-                console.log(`${eventName} event:`, e);
+                // console.log(`${eventName} event:`, e);
             });
         });
     </script>

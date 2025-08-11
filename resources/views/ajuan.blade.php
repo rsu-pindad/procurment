@@ -49,43 +49,4 @@
             </div>
         </div>
     </div>
-
-    <script type="module">
-        const notyf = new Notyf({
-            duration: 10000,
-            position: {
-                x: 'center',
-                y: 'center',
-            },
-            ripple: true,
-            dismissible: true,
-            types: [{
-                type: 'info',
-                background: 'orange',
-                icon: false
-            }]
-        });
-
-        document.addEventListener('livewire:init', () => {
-            Livewire.on('info-hapus', (event) => {
-                notyf.open({
-                    type: 'info',
-                    message: event.message
-                });
-                Livewire.dispatch('pg:eventRefresh-user-ajuan-table-z2bm8x-table');
-            });
-            Livewire.on('modal-stored', (event) => {
-                notyf.open({
-                    type: 'success',
-                    message: 'Pengajuan berhasil dikirim.'
-                });
-            });
-            Livewire.on('modal-edited', (event) => {
-                notyf.open({
-                    type: 'success',
-                    message: 'Pengajuan berhasil diperbarui.'
-                });
-            });
-        });
-    </script>
 </x-layouts.app>
