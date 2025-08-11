@@ -37,6 +37,8 @@ Route::middleware(['auth'])->group(function () {
             Volt::route('user/unit/{user}', 'user.manajemen-unit')->name('manajemen.user.unit');
             Volt::route('user/role/{user}', 'user.manajemen-role')->name('manajemen.user.role');
         });
+
+        Route::view('vendors', 'vendors')->name('vendors');
     });
 
     // role pengadaan dan pegawai

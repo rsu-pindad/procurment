@@ -42,6 +42,9 @@ new class extends Component
                     <x-nav-link :href="route('status-ajuan')" :active="request()->routeIs('status-ajuan')" wire:navigate>
                         {{ __('Status Ajuan') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('vendors')" :active="request()->routeIs('vendors')" wire:navigate>
+                        {{ __('Vendors') }}
+                    </x-nav-link>
                     <x-nav-link :href="route('manajemen.user')" :active="request()->routeIs('manajemen.user')" wire:navigate>
                         {{ __('Manajemen User') }}
                     </x-nav-link>
@@ -105,6 +108,9 @@ new class extends Component
             @if (auth()->user()->hasRole(['pengadaan', 'admin']))
             <x-responsive-nav-link :href="route('status-ajuan')" :active="request()->routeIs('status-ajuan')" wire:navigate>
                 {{ __('Status Ajuan') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('vendors')" :active="request()->routeIs('vendors')" wire:navigate>
+                {{ __('Vendors') }}
             </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('manajemen.user')" :active="request()->routeIs('manajemen.user')" wire:navigate>
                 {{ __('Manajemen User') }}
