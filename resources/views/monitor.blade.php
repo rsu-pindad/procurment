@@ -9,21 +9,8 @@
             <div class="p-6 bg-white shadow-md sm:rounded-lg">
                 <div class="sm:flex sm:items-center sm:justify-between">
                     <x-section-header title="Monitor">
-                        Berikut adalah monitor timeline pengajuan barang.
+                        fitur segera hadir
                     </x-section-header>
-                </div>
-
-                <div class="mt-6 space-y-6">
-                    <div>
-                        <livewire:admin.monitor.monitor-select />
-                    </div>
-
-                    <div class="overflow-x-auto py-2 px-4 sm:px-6 lg:px-8">
-                        <div class="min-w-[640px] inline-block align-middle">
-                            <livewire:admin.monitor.monitor-timeline-horizontal />
-                        </div>
-                    </div>
-
                 </div>
             </div>
         </div>

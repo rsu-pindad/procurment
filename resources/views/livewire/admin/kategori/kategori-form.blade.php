@@ -4,7 +4,8 @@ use Livewire\Volt\Component;
 use Illuminate\Validation\Rule;
 use App\Models\Admin\KategoriPengajuan;
 
-new class extends Component {
+new class extends Component
+{
     public string $nama_kategori = '';
     public string $deskripsi_kategori = '';
 
@@ -38,8 +39,7 @@ new class extends Component {
 }; ?>
 
 <section>
-    <x-primary-button x-data=""
-        x-on:click.prevent="$dispatch('open-modal', 'open-create-kategori')">{{ __('Tambah Kategori') }}
+    <x-primary-button x-data="" x-on:click.prevent="$dispatch('open-modal', 'open-create-kategori')">{{ __('Tambah Kategori') }}
     </x-primary-button>
     <x-modal name="open-create-kategori" :show="$errors->isNotEmpty()" focusable>
         <div class="p-4 space-y-4">
@@ -55,8 +55,7 @@ new class extends Component {
             <form class="space-y-6" wire:submit="storeKategori">
                 <div>
                     <x-input-label for="nama_kategori" :value="__('nama kategori')" />
-                    <x-text-input class="mt-1 block w-full" id="nama_kategori" name="nama_kategori" type="text"
-                        wire:model="nama_kategori" required autofocus autocomplete="nama_kategori" />
+                    <x-text-input class="mt-1 block w-full" id="nama_kategori" name="nama_kategori" type="text" wire:model="nama_kategori" required autofocus autocomplete="nama_kategori" />
                     <x-input-error class="mt-2" :messages="$errors->get('nama_kategori')" />
                 </div>
                 <div>
