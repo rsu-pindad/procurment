@@ -11,12 +11,16 @@ use PowerComponents\LivewirePowerGrid\Facades\Filter;
 use PowerComponents\LivewirePowerGrid\Facades\PowerGrid;
 use PowerComponents\LivewirePowerGrid\PowerGridFields;
 use PowerComponents\LivewirePowerGrid\PowerGridComponent;
+use PowerComponents\LivewirePowerGrid\Traits\WithExport;
+use PowerComponents\LivewirePowerGrid\Components\SetUp\Exportable;
 use \App\Enums\JenisAjuan;
 use App\Models\Admin\StatusAjuan;
 use App\Models\Admin\Unit;
 
 final class UserAjuanTable extends PowerGridComponent
 {
+    use WithExport;
+
     public string $tableName = 'user-ajuan-table-z2bm8x-table';
     public string $sortField = 'tanggal_update_terakhir';
     public string $sortDirection = 'desc';
@@ -37,6 +41,8 @@ final class UserAjuanTable extends PowerGridComponent
             PowerGrid::footer()
                 ->showPerPage()
                 ->showRecordCount(),
+            PowerGrid::exportable(fileName: 'export_ajuan_' . Carbon::now()->format('d-m-y_h:i'))
+                ->type(Exportable::TYPE_XLS, Exportable::TYPE_CSV),
         ];
     }
 
@@ -80,6 +86,7 @@ final class UserAjuanTable extends PowerGridComponent
     {
         return [
             Column::make('No', 'id')
+                ->visibleInExport(false)
                 ->index(),
             Column::make('Unit', 'units_id')
                 ->sortable()
