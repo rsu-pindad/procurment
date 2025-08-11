@@ -122,6 +122,16 @@
                 message: () => 'Status berhasil dikonfirmasi.',
                 dispatch: () => Livewire.dispatch('pg:eventRefresh-user-ajuan-table-z2bm8x-table'),
             },
+            {
+                eventName: 'updated-user-role',
+                type: 'info',
+                message: () => 'Role user berhasil dipilih.'
+            },
+            {
+                eventName: 'updated-user-unit',
+                type: 'info',
+                message: () => 'Unit user berhasil dipilih.'
+            },
         ];
 
         infoHandlers.forEach(({

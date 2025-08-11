@@ -3,9 +3,12 @@
 use Livewire\Volt\Component;
 use App\Models\Admin\Unit;
 use App\Models\User;
+use Livewire\Attributes\{Layout, Title};
 use Livewire\Attributes\Locked;
 
-new class extends Component
+new
+#[Layout('components.layouts.app')] #[Title('Manajemen Unit User')]
+class extends Component
 {
     public ?int $selectedUnit;
 
@@ -18,7 +21,7 @@ new class extends Component
     {
         $this->id = $user;
         $this->lastUserUnit = User::find($user)->unit_id;
-        $this->selectedUnit = $this->lastUserUnit; // <- Set default terpilih
+        $this->selectedUnit = $this->lastUserUnit;
     }
 
     public function units()
@@ -37,14 +40,14 @@ new class extends Component
 
     public function goBack(): void
     {
-        $this->redirect('/management/user', navigate: true);
+        $this->redirect('/manajemen/user', navigate: true);
     }
 }; ?>
 
 <section>
     <x-slot name="header">
         <h2 class="font-semibold text-lg text-gray-800 leading-tight">
-            {{ __('Management User Unit') }}
+            {{ __('Manajemen User Unit') }}
         </h2>
     </x-slot>
     <div class="py-5 sm:py-6">
@@ -76,31 +79,3 @@ new class extends Component
         </div>
     </div>
 </section>
-
-@pushOnce('customScripts')
-<script type="module">
-    const notyf = new Notyf({
-        duration: 10000,
-        position: {
-            x: 'center',
-            y: 'top',
-        },
-        ripple: true,
-        dismissible: true,
-        types: [{
-            type: 'info',
-            background: 'blue',
-            icon: false
-        }]
-    });
-
-    document.addEventListener('livewire:init', () => {
-        Livewire.on('updated-user-unit', (event) => {
-            notyf.open({
-                type: 'info',
-                message: 'unit user berhasil dipilih.'
-            });
-        });
-    });
-</script>
-@endpushOnce

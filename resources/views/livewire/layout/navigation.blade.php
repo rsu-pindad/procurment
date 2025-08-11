@@ -42,8 +42,8 @@ new class extends Component
                     <x-nav-link :href="route('status-ajuan')" :active="request()->routeIs('status-ajuan')" wire:navigate>
                         {{ __('Status Ajuan') }}
                     </x-nav-link>
-                    <x-nav-link :href="route('management.user')" :active="request()->routeIs('management.user')" wire:navigate>
-                        {{ __('Management User') }}
+                    <x-nav-link :href="route('manajemen.user')" :active="request()->routeIs('manajemen.user')" wire:navigate>
+                        {{ __('Manajemen User') }}
                     </x-nav-link>
                     @endif
                 </div>
@@ -106,8 +106,8 @@ new class extends Component
             <x-responsive-nav-link :href="route('status-ajuan')" :active="request()->routeIs('status-ajuan')" wire:navigate>
                 {{ __('Status Ajuan') }}
             </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('management.user')" :active="request()->routeIs('management.user')" wire:navigate>
-                {{ __('Manajement User') }}
+            <x-responsive-nav-link :href="route('manajemen.user')" :active="request()->routeIs('manajemen.user')" wire:navigate>
+                {{ __('Manajemen User') }}
             </x-responsive-nav-link>
             @endif
         </div>
