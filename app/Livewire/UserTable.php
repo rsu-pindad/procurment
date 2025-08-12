@@ -101,29 +101,37 @@ final class UserTable extends PowerGridComponent
                 ->slot('Unit')
                 ->class('pg-btn-white dark:ring-pg-primary-600 dark:border-pg-primary-600 dark:hover:bg-pg-primary-700 dark:ring-offset-pg-primary-800 dark:text-pg-primary-300 dark:bg-pg-primary-700')
                 ->route('manajemen.user.unit', ['user' => $row->id])
-                ->navigate()
-        ];
-        if(auth()->user()->hasRole('admin')){
-            $button = array_merge(
-                $button,[
-                Button::add('Role')
-                ->slot('Role')
+                ->navigate(),
+            Button::add('Password')
+                ->slot('Password')
+                ->tooltip('Password User' . $row->name)
+                ->id()
                 ->class('pg-btn-white dark:ring-pg-primary-600 dark:border-pg-primary-600 dark:hover:bg-pg-primary-700 dark:ring-offset-pg-primary-800 dark:text-pg-primary-300 dark:bg-pg-primary-700')
-                ->route('manajemen.user.role', ['user' => $row->id])
-                ->navigate()],
+                ->dispatch('editPassword', ['rowId' => $row->id]),
+        ];
+        if (auth()->user()->hasRole('admin')) {
+            $button = array_merge(
+                $button,
+                [
+                    Button::add('Role')
+                        ->slot('Role')
+                        ->class('pg-btn-white dark:ring-pg-primary-600 dark:border-pg-primary-600 dark:hover:bg-pg-primary-700 dark:ring-offset-pg-primary-800 dark:text-pg-primary-300 dark:bg-pg-primary-700')
+                        ->route('manajemen.user.role', ['user' => $row->id])
+                        ->navigate()
+                ],
             );
         }
         // return [
-            // Button::add('edit')
-            //     ->slot('Edit: ' . $row->id)
-            //     ->id()
-            //     ->class('pg-btn-white dark:ring-pg-primary-600 dark:border-pg-primary-600 dark:hover:bg-pg-primary-700 dark:ring-offset-pg-primary-800 dark:text-pg-primary-300 dark:bg-pg-primary-700')
-            //     ->dispatch('edit', ['rowId' => $row->id])
-            // Button::add('unit')
-            //     ->slot('Unit')
-            //     ->class('pg-btn-white dark:ring-pg-primary-600 dark:border-pg-primary-600 dark:hover:bg-pg-primary-700 dark:ring-offset-pg-primary-800 dark:text-pg-primary-300 dark:bg-pg-primary-700')
-            //     ->route('manajemen.user.unit', ['user' => $row->id])
-            //     ->navigate(),
+        // Button::add('edit')
+        //     ->slot('Edit: ' . $row->id)
+        //     ->id()
+        //     ->class('pg-btn-white dark:ring-pg-primary-600 dark:border-pg-primary-600 dark:hover:bg-pg-primary-700 dark:ring-offset-pg-primary-800 dark:text-pg-primary-300 dark:bg-pg-primary-700')
+        //     ->dispatch('edit', ['rowId' => $row->id])
+        // Button::add('unit')
+        //     ->slot('Unit')
+        //     ->class('pg-btn-white dark:ring-pg-primary-600 dark:border-pg-primary-600 dark:hover:bg-pg-primary-700 dark:ring-offset-pg-primary-800 dark:text-pg-primary-300 dark:bg-pg-primary-700')
+        //     ->route('manajemen.user.unit', ['user' => $row->id])
+        //     ->navigate(),
         // ];
         return $button;
     }
