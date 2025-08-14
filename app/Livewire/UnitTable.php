@@ -6,7 +6,6 @@ use App\Models\Admin\Unit;
 use Illuminate\Database\Eloquent\Builder;
 use PowerComponents\LivewirePowerGrid\Button;
 use PowerComponents\LivewirePowerGrid\Column;
-use PowerComponents\LivewirePowerGrid\Facades\Filter;
 use PowerComponents\LivewirePowerGrid\Facades\PowerGrid;
 use PowerComponents\LivewirePowerGrid\PowerGridFields;
 use PowerComponents\LivewirePowerGrid\PowerGridComponent;
@@ -14,11 +13,12 @@ use PowerComponents\LivewirePowerGrid\PowerGridComponent;
 final class UnitTable extends PowerGridComponent
 {
     public string $tableName = 'unit-table-umnmyu-table';
+    public string $sortField = 'nama_unit';
+    public string $sortDirection = 'asc';
+    public bool $withSortStringNumber = true;
 
     public function setUp(): array
     {
-        // $this->showCheckBox();
-
         return [
             PowerGrid::header()
                 ->showSearchInput(),
@@ -31,11 +31,6 @@ final class UnitTable extends PowerGridComponent
     public function datasource(): Builder
     {
         return Unit::query();
-    }
-
-    public function relationSearch(): array
-    {
-        return [];
     }
 
     public function fields(): PowerGridFields
@@ -54,17 +49,26 @@ final class UnitTable extends PowerGridComponent
             Column::make('Nama', 'nama_unit')
                 ->sortable()
                 ->searchable(),
-
             Column::make('Keterangan', 'keterangan_unit')
-                ->sortable()
                 ->searchable(),
             Column::action('#')
         ];
     }
 
-    public function filters(): array
+    #[\Livewire\Attributes\On('hapus')]
+    public function hapus($rowId): void
     {
-        return [];
+        $pesan = '';
+        try {
+            $ajuan = Unit::find($rowId);
+            $ajuan->delete();
+            if ($ajuan) {
+                $pesan = 'Unit berhasil dihapus.';
+            }
+            $this->dispatch('info-hapus', message: $pesan);
+        } catch (\Throwable $th) {
+            $this->dispatch('info-hapus', message: $th->getMessage());
+        }
     }
 
     public function actions(Unit $row): array
@@ -79,8 +83,9 @@ final class UnitTable extends PowerGridComponent
             Button::add('hapus')
                 ->slot('hapus')
                 ->tooltip('hapus ' . $row->nama_unit)
-                ->id()
                 ->class('pg-btn-white dark:ring-pg-primary-600 dark:border-pg-primary-600 dark:hover:bg-pg-primary-700 dark:ring-offset-pg-primary-800 dark:text-pg-primary-300 dark:bg-pg-primary-700')
+                ->id('hapus')
+                ->confirm('hapus unit?')
                 ->dispatch('hapus', ['rowId' => $row->id])
         ];
     }
