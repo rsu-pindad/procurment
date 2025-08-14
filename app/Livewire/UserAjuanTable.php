@@ -165,27 +165,34 @@ final class UserAjuanTable extends PowerGridComponent
     public function actions(Ajuan $row): array
     {
         $button = [
+            // Button::make('detail')
+            //     ->slot('Detail')
+            //     ->class('pg-btn-white')
+            //     ->route('ajuan.detail', ['ajuan' => $row->id])
+            //     ->navigate(),
+            //     // ->target('_self')
             Button::make('detail')
                 ->slot('Detail')
                 ->class('pg-btn-white')
-                ->route('ajuan.detail', ['ajuan' => $row->id])
-                ->navigate(),
-            // ->target('_self')
+                ->route('ajuan.detail', ['ajuan' => $row->id]),
+                // ->route('ajuan.detail', ['ajuan' => $row->id])
+                // ->navigate(),
         ];
         if (auth()->user()->hasRole('pengadaan', true)) {
             $button = array_merge(
                 $button,
                 [
+                    // Button::add('edit')
+                    //     ->slot('Edit')
+                    //     ->class('pg-btn-white')
+                    //     ->id('edit')
+                    //     ->route('ajuan.edit', ['ajuan' => $row->id])
+                    //     ->navigate(),
                     Button::add('edit')
                         ->slot('Edit')
                         ->class('pg-btn-white')
                         ->id('edit')
-                        // ->attributes([
-                        // 'id' => 'edit-' . $row->id,
-                        // 'class' => 'pg-btn-white text-blue-500'
-                        // ])
-                        ->route('ajuan.edit', ['ajuan' => $row->id])
-                        ->navigate(),
+                        ->dispatch('openModal', ['name' => 'open-edit-ajuan', 'rowId' => $row->id]),
                 ],
                 [
                     Button::add('hapus')
