@@ -3,39 +3,74 @@
     "file": "assets/vendor-Dwv3WSMj.css",
     "src": "_vendor-!~{003}~.js"
   },
-  "_vendor-BEoIi7m2.js": {
-    "file": "assets/vendor-BEoIi7m2.js",
+  "_vendor-BpA6V8xu.js": {
+    "file": "assets/vendor-BpA6V8xu.js",
     "name": "vendor",
     "imports": [
-      "_vendor_chartjs-CvEYfZd6.js"
+      "_vendor_chartjs-pNrZhbib.js"
     ],
     "css": [
       "assets/vendor-Dwv3WSMj.css"
     ]
   },
-  "_vendor_chartjs-CvEYfZd6.js": {
-    "file": "assets/vendor_chartjs-CvEYfZd6.js",
+  "_vendor_chartjs-pNrZhbib.js": {
+    "file": "assets/vendor_chartjs-pNrZhbib.js",
     "name": "vendor_chartjs",
     "imports": [
-      "_vendor-BEoIi7m2.js"
+      "_vendor-BpA6V8xu.js"
     ]
   },
   "resources/css/app.css": {
-    "file": "assets/app-BUPHBPHP.css",
+    "file": "assets/app-BdqhGATJ.css",
     "src": "resources/css/app.css",
     "isEntry": true
   },
   "resources/js/app.js": {
-    "file": "assets/app-CTgxzIOd.js",
+    "file": "assets/app-OWbnmN6M.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
     "imports": [
-      "_vendor-BEoIi7m2.js",
-      "_vendor_chartjs-CvEYfZd6.js"
+      "_vendor-BpA6V8xu.js",
+      "_vendor_chartjs-pNrZhbib.js"
+    ],
+    "dynamicImports": [
+      "resources/js/notifications.js",
+      "resources/js/pages/ajuan.js",
+      "resources/js/pages/dashboard.js"
     ],
     "css": [
       "assets/app-ehFyFt0y.css"
+    ]
+  },
+  "resources/js/notifications.js": {
+    "file": "assets/notifications-BSYUwzlY.js",
+    "name": "notifications",
+    "src": "resources/js/notifications.js",
+    "isDynamicEntry": true,
+    "imports": [
+      "_vendor-BpA6V8xu.js",
+      "_vendor_chartjs-pNrZhbib.js"
+    ]
+  },
+  "resources/js/pages/ajuan.js": {
+    "file": "assets/ajuan-CnHbISXt.js",
+    "name": "ajuan",
+    "src": "resources/js/pages/ajuan.js",
+    "isDynamicEntry": true,
+    "imports": [
+      "_vendor-BpA6V8xu.js",
+      "_vendor_chartjs-pNrZhbib.js"
+    ]
+  },
+  "resources/js/pages/dashboard.js": {
+    "file": "assets/dashboard-BLVErH3B.js",
+    "name": "dashboard",
+    "src": "resources/js/pages/dashboard.js",
+    "isDynamicEntry": true,
+    "imports": [
+      "_vendor_chartjs-pNrZhbib.js",
+      "_vendor-BpA6V8xu.js"
     ]
   }
 }
