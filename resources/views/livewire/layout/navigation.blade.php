@@ -8,7 +8,7 @@ new class extends Component
     public function logout(Logout $logout): void
     {
         $logout();
-        $this->redirect('/', navigate: true);
+        $this->redirect('/', navigate: false);
     }
 }; ?>
 
@@ -17,35 +17,35 @@ new class extends Component
         <div class="flex justify-between h-16">
             <div class="flex">
                 <div class="shrink-0 flex items-center">
-                    <a href="{{ route('dashboard') }}" wire:navigate>
+                    <a href="{{ route('dashboard') }}" >
                         <x-application-logo class="block h-9 w-9 fill-current text-gray-800" />
                     </a>
                 </div>
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" wire:navigate>
+                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" >
                         {{ __('Dashboard') }}
                     </x-nav-link>
                     @if (auth()->user()->hasRole('admin'))
-                    <x-nav-link :href="route('unit')" :active="request()->routeIs('unit')" wire:navigate>
+                    <x-nav-link :href="route('unit')" :active="request()->routeIs('unit')" >
                         {{ __('Unit') }}
                     </x-nav-link>
-                    <x-nav-link :href="route('kategori')" :active="request()->routeIs('kategori')" wire:navigate>
+                    <x-nav-link :href="route('kategori')" :active="request()->routeIs('kategori')" >
                         {{ __('Kategori') }}
                     </x-nav-link>
                     @endif
                     @if (auth()->user()->hasRole(['pengadaan', 'pegawai']))
-                    <x-nav-link :href="route('ajuan')" :active="request()->routeIs('ajuan')" wire:navigate>
+                    <x-nav-link :href="route('ajuan')" :active="request()->routeIs('ajuan')" >
                         {{ __('Ajuan') }}
                     </x-nav-link>
                     @endif
                     @if (auth()->user()->hasRole(['pengadaan', 'admin']))
-                    <x-nav-link :href="route('status-ajuan')" :active="request()->routeIs('status-ajuan')" wire:navigate>
+                    <x-nav-link :href="route('status-ajuan')" :active="request()->routeIs('status-ajuan')" >
                         {{ __('Status Ajuan') }}
                     </x-nav-link>
-                    <x-nav-link :href="route('vendors')" :active="request()->routeIs('vendors')" wire:navigate>
+                    <x-nav-link :href="route('vendors')" :active="request()->routeIs('vendors')" >
                         {{ __('Vendors') }}
                     </x-nav-link>
-                    <x-nav-link :href="route('manajemen.user')" :active="request()->routeIs('manajemen.user')" wire:navigate>
+                    <x-nav-link :href="route('manajemen.user')" :active="request()->routeIs('manajemen.user')" >
                         {{ __('Manajemen User') }}
                     </x-nav-link>
                     @endif
@@ -67,7 +67,7 @@ new class extends Component
                             </button>
                         </x-slot>
                         <x-slot name="content">
-                            <x-dropdown-link :href="route('profile')" class="inline-flex items-center" wire:navigate>
+                            <x-dropdown-link :href="route('profile')" class="inline-flex items-center" >
                                 @svg('heroicon-o-cog-6-tooth', 'h-4 w-4 mr-2'){{ __('Profile') }}
                             </x-dropdown-link>
                             <hr class="my-2">
@@ -89,30 +89,30 @@ new class extends Component
     </div>
     <div class="hidden sm:hidden" :class="{ 'block': open, 'hidden': !open }">
         <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" wire:navigate>
+            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" >
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
             @if (auth()->user()->hasRole('admin'))
-            <x-responsive-nav-link :href="route('unit')" :active="request()->routeIs('unit')" wire:navigate>
+            <x-responsive-nav-link :href="route('unit')" :active="request()->routeIs('unit')" >
                 {{ __('Unit') }}
             </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('kategori')" :active="request()->routeIs('kategori')" wire:navigate>
+            <x-responsive-nav-link :href="route('kategori')" :active="request()->routeIs('kategori')" >
                 {{ __('Kategori') }}
             </x-responsive-nav-link>
             @endif
             @if (auth()->user()->hasRole(['pengadaan', 'pegawai']))
-            <x-responsive-nav-link :href="route('ajuan')" :active="request()->routeIs('ajuan')" wire:navigate>
+            <x-responsive-nav-link :href="route('ajuan')" :active="request()->routeIs('ajuan')" >
                 {{ __('Ajuan') }}
             </x-responsive-nav-link>
             @endif
             @if (auth()->user()->hasRole(['pengadaan', 'admin']))
-            <x-responsive-nav-link :href="route('status-ajuan')" :active="request()->routeIs('status-ajuan')" wire:navigate>
+            <x-responsive-nav-link :href="route('status-ajuan')" :active="request()->routeIs('status-ajuan')" >
                 {{ __('Status Ajuan') }}
             </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('vendors')" :active="request()->routeIs('vendors')" wire:navigate>
+            <x-responsive-nav-link :href="route('vendors')" :active="request()->routeIs('vendors')" >
                 {{ __('Vendors') }}
             </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('manajemen.user')" :active="request()->routeIs('manajemen.user')" wire:navigate>
+            <x-responsive-nav-link :href="route('manajemen.user')" :active="request()->routeIs('manajemen.user')" >
                 {{ __('Manajemen User') }}
             </x-responsive-nav-link>
             @endif
@@ -123,7 +123,7 @@ new class extends Component
                 <div class="font-medium text-sm text-gray-500">{{ auth()->user()->email }}</div>
             </div>
             <div class="mt-3 space-y-1">
-                <x-responsive-nav-link :href="route('profile')" wire:navigate>
+                <x-responsive-nav-link :href="route('profile')" >
                     {{ __('Profile') }}
                 </x-responsive-nav-link>
                 <button class="w-full text-start" wire:click="logout">

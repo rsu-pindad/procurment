@@ -8,7 +8,9 @@ use App\Enums\InputType;
 
 new #[Layout('components.layouts.app')] #[Title('detail pengajuan')] class extends Component
 {
-    public Ajuan $ajuan;
+
+    #[Locked]
+    public $ajuan = null;
 
     public $audit = [];
     public $histories = null;
@@ -30,8 +32,9 @@ new #[Layout('components.layouts.app')] #[Title('detail pengajuan')] class exten
     protected ?StatusAjuan $cachedSelectedStatus = null;
     protected $listeners = ['refreshStatusData' => 'refreshStatusData'];
 
-    public function mount(Ajuan $ajuan)
+    public function mount(string $ajuan = null)
     {
+        $ajuan = Ajuan::findOrFail(request()->route('ajuan'));
         $ajuan->load(['status_ajuan', 'unit', 'reason_pengajuans.status_ajuan', 'reason_pengajuans.users']);
         $this->ajuan = $ajuan;
         $this->loadData();

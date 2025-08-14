@@ -12,7 +12,7 @@ new class extends Component
 {
     public $unitOptions = [];
     public ?int $selectedUnitId = null;
-    public string $bulanFilter = '0';
+    public string $bulanFilter = '3';
     protected ?array $cachedJatuhTempoData = null;
 
     public function mount()
@@ -106,8 +106,7 @@ new class extends Component
     <div class="mb-4">
         <label class="text-sm text-gray-600 block mb-1" for="bulanFilter">Filter Jatuh Tempo:</label>
         <x-select-input class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200" id="bulanFilter" name="bulanFilter" wire:model.live="bulanFilter">
-            <option value="">semua</option>
-            <option value="3">3 Bulan Lagi</option>
+            <option value="3" selected>3 Bulan Lagi</option>
             <option value="2">2 Bulan Lagi</option>
             <option value="1">1 Bulan Lagi</option>
         </x-select-input>
@@ -117,85 +116,12 @@ new class extends Component
     </div>
 </div>
 
-@script
-<script type="module">
-    let jatuhTempoChartInstance;
-    document.getElementById('export-chart-tempo-btn').addEventListener('click', () => {
-        setTimeout(() => {
-            const canvas = document.getElementById('jatuhTempoChart');
-            if (!canvas) {
-                console.warn("tempo canvas belum ditemukan.");
-                return;
-            }
-            const base64Image = canvas.toDataURL('image/png');
-            Livewire.dispatch('exportJatuhTempoChartPdf', {
-                image: base64Image
-            });
-        }, 300);
-    });
-    async function renderJatuhTempoChart(labels, data) {
-        const delay = 300;
-        setTimeout(() => {
-            const canvas = document.getElementById('jatuhTempoChart');
-            if (!canvas) return;
-            const ctx = canvas.getContext('2d');
-            const chartData = {
-                labels: labels,
-                datasets: [{
-                    label: 'Jumlah Ajuan Jatuh Tempo',
-                    data: data,
-                    backgroundColor: '#f59e0b',
-                    borderColor: '#d97706',
-                    borderWidth: 1
-                }]
-            };
-            const config = {
-                type: 'bar',
-                data: chartData,
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                precision: 0
-                            }
-                        }
-                    },
-                    plugins: {
-                        datalabels: {
-                            anchor: 'end',
-                            align: 'center',
-                            color: '#000',
-                            font: {
-                                weight: 'bold',
-                                size: 12
-                            },
-                            formatter: (value) => value.toLocaleString('id-ID')
-                        }
-                    }
-                },
-                plugins: [ChartDataLabels]
-            };
-            if (jatuhTempoChartInstance) {
-                jatuhTempoChartInstance.data.labels = labels;
-                jatuhTempoChartInstance.data.datasets[0].data = data;
-                jatuhTempoChartInstance.update();
-            } else {
-                jatuhTempoChartInstance = new Chart(ctx, config);
-            }
-            Livewire.dispatch('jatuhTempoChartRendered');
-        }, delay);
-    }
-    document.addEventListener('livewire:init', () => {
-        renderJatuhTempoChart(@json($this->jatuhTempoChartData['labels']), @json($this->jatuhTempoChartData['data']));
-    });
-    Livewire.on('refreshJatuhTempoChart', ({
-        labels,
-        data
-    }) => {
-        renderJatuhTempoChart(labels, data);
-    });
+@pushOnce('customScripts')
+<script type="application/json" id="jatuhTempoChartLabels">
+    @json($this->jatuhTempoChartData['labels'])
 </script>
-@endscript
+
+<script type="application/json" id="jatuhTempoChartData">
+    @json($this->jatuhTempoChartData['data'])
+</script>
+@endpushOnce

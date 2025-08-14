@@ -48,12 +48,7 @@ new class extends Component
             'kategori' => 'required',
         ];
 
-        if ($this->rkapForm) {
-            $finalForm = array_merge($jenisForm, $rkap);
-            return $finalForm;
-        }
-
-        return $jenisForm;
+        return $this->rkapForm ? array_merge($jenisForm, $rkap) : $jenisForm;
     }
 
     protected function messages()
@@ -71,30 +66,24 @@ new class extends Component
             'hps.max' => __('hps maksimal 5.000.000.000'),
             'spesifikasi.string' => __('hanya menerima huruf dan angka'),
             'spesifikasi.max' => __('spesifikasi maksimal 255 karakter'),
-            // 'file_rab.required' => __('validation.file_rab.required'),
             'file_rab.file' => __('hanya menerima file'),
             'file_rab.mimes' => __('file harus berformat .pdf'),
             'file_rab.max' => __('ukuran file maksimal 5MB'),
-            // 'file_nota_dinas.required' => __('validation.file_nota_dinas.required'),
             'file_nota_dinas.file' => __('hanya menerima file'),
             'file_nota_dinas.mimes' => __('file harus berformat .pdf'),
             'file_nota_dinas.max' => __('ukuran file maksimal 5MB'),
-            // 'file_analisa_kajian.required' => __('validation.file_analisa_kajian.required'),
             'file_analisa_kajian.file' => __('hanya menerima file'),
             'file_analisa_kajian.mimes' => __('file harus berformat .pdf'),
             'file_analisa_kajian.max' => __('ukuran file maksimal 5MB'),
             'jenis_ajuan.required' => __('mohon pilih jenis ajuan'),
             'realisasi.date' => __('format tanggal tidak cocok'),
         ];
+
         $rkap = [
             'kategori.required' => __('mohon pilih kategori'),
         ];
 
-        if ($this->rkapForm) {
-            $finalForm = array_merge($jenisForm, $rkap);
-            return $finalForm;
-        }
-        return $jenisForm;
+        return $this->rkapForm ? array_merge($jenisForm, $rkap) : $jenisForm;
     }
 
     public function mount()
@@ -119,21 +108,22 @@ new class extends Component
     #[Computed]
     public function updatedHps($value)
     {
-        // $this->hps = preg_replace('/\D/', '', $value);
-        $cleaned = preg_replace('/\D/', '', $value);
-        $this->hps = (int) $cleaned;
+        $this->hps = (int) preg_replace('/\D/', '', $value);
     }
 
     #[Computed]
     public function updatedJenisAjuan($value)
     {
-        if ($this->jenis_ajuan === 'NONRKAP') {
+        if ($value === 'NONRKAP') {
             $this->rkapForm = false;
             $this->kategori = null;
+            $this->dispatch('resetkategoriSelect');
         } else {
             $this->rkapForm = true;
+            $this->dispatch('refreshkategoriSelect');
         }
     }
+
 
     public function informasiUnit($data = [], $ajuan): void
     {
@@ -144,30 +134,22 @@ new class extends Component
 
     public function inform()
     {
-        // ini untuk user menginfokan ke pengadaan
         \App\Models\User::withRole('pengadaan')
             ->get()
             ->each(function ($pengadaan) use ($ajuan) {
                 $pengadaan->notify(new \App\Notifications\PengajuanUserNotification($ajuan));
-                // Siarkan event untuk realtime update
-                // event(new \App\Events\NotificationReceived($pengadaan->notifications()->latest()->first(), $pengadaan->id));
             });
     }
 
     public function store(): void
     {
         $validated = $this->validate();
-        // $pathRab = $this->file_rab->store('rab');
         $pathNodin = $this->file_nota_dinas ? $this->file_nota_dinas->store('nodin') : null;
-        // $pathAnalisa = $this->file_analisa_kajian->store('analisa');
         $pathRab = $this->file_rab ? $this->file_rab->store('rab') : null;
-        // $pathNodin = $this->file_nota_dinas ? $this->file_nota_dinas->store('nodin') : null;
         $pathAnalisa = $this->file_analisa_kajian ? $this->file_analisa_kajian->store('analisa') : null;
-        $realisasi = \App\Models\Admin\StatusAjuan::where('nama_status_ajuan', 'Pelaksanaan / Delivery')->get();
+        $realisasi = \App\Models\Admin\StatusAjuan::where('nama_status_ajuan', 'Pelaksanaan / Delivery')->first()?->id;
 
-        if (count($realisasi) > 0) {
-            $realisasi = $realisasi->first()->id;
-
+        if ($realisasi) {
             $ajuan = new Ajuan();
             $ajuan->units_id = $this->unit;
             $ajuan->tanggal_ajuan = $this->tanggal_ajuan;
@@ -188,7 +170,6 @@ new class extends Component
                 $ajuan->kategori_pengajuans()->attach($this->kategori);
             }
 
-            // Attach status_ajuan ke pivot dengan kolom realisasi dan result_realisasi
             $ajuan->statusHistories()->attach($realisasi, [
                 'updated_by' => auth()->id(),
                 'realisasi' => $this->realisasi,
@@ -197,15 +178,16 @@ new class extends Component
                 'updated_at' => now(),
             ]);
 
-            // ini untuk pengadaan menginfokan ke unit
             $rolePegawai = \App\Models\User::withRole('pegawai')->where('unit_id', $this->unit)->get();
-            if (count($rolePegawai) > 0) {
+            if ($rolePegawai->isNotEmpty()) {
                 $this->informasiUnit($rolePegawai, $ajuan);
             }
 
             $this->dispatch('modal-stored', name: 'pengajuan');
-            // $this->dispatch('pg:eventRefresh-user-ajuan-table-z2bm8x-table');
             $this->reset();
+            $this->tanggal_ajuan = now()->format('Y-m-d');
+            $this->jenis_ajuan = JenisAjuan::RKAP->value;
+            $this->realisasi = carbon($this->tanggal_ajuan)->addMonth(2)->format('Y-m-d');
         }
     }
 };
@@ -213,81 +195,90 @@ new class extends Component
 ?>
 
 <section>
-    <div class="py-4 sm:py-6">
-        <form wire:submit="store">
-            <!-- Grid untuk input fields -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                    <x-input-label for="tanggal_ajuan" :value="__('tanggal ajuan')" required />
-                    <x-text-input class="mt-1 block w-full" id="tanggal_ajuan" name="tanggal_ajuan" type="date" wire:model="tanggal_ajuan" autofocus autocomplete="tanggal_ajuan" />
-                    <x-input-error class="mt-2" :messages="$errors->get('tanggal_ajuan')" />
+    <x-primary-button x-data="" x-on:click.prevent="$dispatch('open-modal', 'open-create-ajuan')">{{ __('Tambah Ajuan') }}
+    </x-primary-button>
+    <x-modal name="open-create-ajuan" :show="$errors->isNotEmpty()" maxWidth="max" focusable wire:key="modal-create-ajuan">
+        <div class="p-4 space-y-4">
+            <header>
+                <h2 class="text-lg font-medium text-gray-900">
+                    {{ __('Form Ajuan') }}
+                </h2>
+                <p class="mt-1 text-sm text-gray-600">
+                    {{ __('Masukkan informasi ajuan pada form di bawah ini.') }}
+                </p>
+            </header>
+            <form class="space-y-6 space-x-3" wire:submit="store">
+                <div class="grid grid-cols-4 gap-6">
+                    <div>
+                        <x-input-label for="tanggal_ajuan" :value="__('tanggal ajuan')" required />
+                        <x-text-input class="mt-1 block w-full" id="tanggal_ajuan" name="tanggal_ajuan" type="date" wire:model="tanggal_ajuan" autofocus autocomplete="tanggal_ajuan" />
+                        <x-input-error class="mt-2" :messages="$errors->get('tanggal_ajuan')" />
+                    </div>
+                    <div>
+                        <x-input-label for="produk_ajuan" :value="__('produk atau jasa ajuan')" required />
+                        <x-text-input class="mt-1 block w-full" id="produk_ajuan" name="produk_ajuan" type="text" wire:model="produk_ajuan" autofocus autocomplete="produk_ajuan" placeholder="nama jasa/produk" />
+                        <x-input-error class="mt-2" :messages="$errors->get('produk_ajuan')" />
+                    </div>
+                    <div>
+                        <x-input-label for="unit" :value="__('unit')" required />
+                        <x-select-input class="mt-1 block w-full" id="unit" name="unit" wire:model.lazy="unit">
+                            <option value="">{{ __('pilih unit') }}</option>
+                            @foreach ($this->units() as $unit)
+                            <option value="{{ $unit->id }}">{{ $unit->nama_unit }}</option>
+                            @endforeach
+                        </x-select-input>
+                        <x-input-error class="mt-2" :messages="$errors->get('unit')" />
+                    </div>
+                    <div>
+                        <x-input-label for="hps" :value="__('hps')" required />
+                        <x-money-input class="mt-1 block w-full" id="hps" wire:model.lazy="hps" autofocus />
+                        <x-input-error class="mt-2" :messages="$errors->get('hps')" />
+                    </div>
+                    <div class="col-span-2">
+                        <x-input-label for="spesifikasi" :value="__('spesifikasi')" />
+                        <x-textarea id="spesifikasi" name="keterangan" wire:model="spesifikasi" autofocus placeholder="spefisikasi jasa/produk" />
+                        <x-input-error class="mt-2" :messages="$errors->get('spesifikasi')" />
+                    </div>
+                    <div class="col-span-2">
+                        <x-input-label for="jenis_ajuan" :value="__('jenis ajuan')" required />
+                        <x-radio-enum class="mt-1 block w-full" name="jenis_ajuan" enum="App\Enums\JenisAjuan" model="jenis_ajuan" wire:model.lazy="jenis_ajuan" />
+                        <x-input-error class="mt-2" :messages="$errors->get('jenis_ajuan')" />
+                    </div>
+                    <div class="col-span-2 @if(!$rkapForm) hidden @endif">
+                        <x-input-label for="kategori" :value="__('kategori')" required />
+                        <livewire:utility.remote-select id="kategori" name="kategori" model="App\Models\Admin\KategoriPengajuan" label="nama_kategori" wire:model.lazy="kategori" wire:key="kategori-select" :disabled="!$rkapForm" />
+                        <x-input-error class="mt-2" :messages="$errors->get('kategori')" />
+                    </div>
+                    <div class="@if(!$rkapForm)col-span-4 @else col-span-2 @endif">
+                        <x-input-label for="realisasi" :value="__('tanggal estimasi realisasi ke delivery')" />
+                        <x-text-input class="mt-1 block w-full" id="realisasi" type="date" wire:model="realisasi" />
+                        <x-input-error class="mt-2" :messages="$errors->get('realisasi')" />
+                    </div>
+                    <div class="col-span-2">
+                        <x-input-label for="file_nota_dinas" :value="__('dokumen nota dinas (pdf)')" />
+                        <x-file-input class="mt-1 block w-full" id="file_nota_dinas" wire:model="file_nota_dinas" autofocus />
+                        <x-input-error class="mt-2" :messages="$errors->get('file_nota_dinas')" />
+                    </div>
+                    @if (!$rkapForm)
+                    <div>
+                        <x-input-label for="file_rab" :value="__('dokumen rab (pdf)')" />
+                        <x-file-input class="mt-1 block w-full" id="file_rab" wire:model="file_rab" autofocus />
+                        <x-input-error class="mt-2" :messages="$errors->get('file_rab')" />
+                    </div>
+                    <div>
+                        <x-input-label for="file_analisa_kajian" :value="__('dokumen analisa (pdf)')" />
+                        <x-file-input class="mt-1 block w-full" id="file_analisa_kajian" wire:model="file_analisa_kajian" autofocus />
+                        <x-input-error class="mt-2" :messages="$errors->get('file_analisa_kajian')" />
+                    </div>
+                    @endif
                 </div>
-                <div>
-                    <x-input-label for="produk_ajuan" :value="__('produk atau jasa ajuan')" required />
-                    <x-text-input class="mt-1 block w-full" id="produk_ajuan" name="produk_ajuan" type="text" wire:model="produk_ajuan" autofocus autocomplete="produk_ajuan" placeholder="nama jasa/produk" />
-                    <x-input-error class="mt-2" :messages="$errors->get('produk_ajuan')" />
+                <div class="mt-6 flex items-center gap-4">
+                    <x-primary-button>@svg('heroicon-o-paper-airplane','w-5 h-5 mr-2'){{ __('Ajukan') }}</x-primary-button>
+                    <x-action-message class="me-3" on="modal-stored">
+                        {{ __('Pengajuan dikirim.') }}
+                    </x-action-message>
                 </div>
-                <div>
-                    <x-input-label for="unit" :value="__('unit')" required />
-                    <x-select-input class="mt-1 block w-full" id="unit" name="unit" wire:model.lazy="unit">
-                        <option value="">{{ __('pilih unit') }}</option>
-                        @foreach ($this->units() as $unit)
-                        <option value="{{ $unit->id }}">{{ $unit->nama_unit }}</option>
-                        @endforeach
-                    </x-select-input>
-                    <x-input-error class="mt-2" :messages="$errors->get('unit')" />
-                </div>
-                <div>
-                    <x-input-label for="hps" :value="__('hps')" required />
-                    <x-money-input class="mt-1 block w-full" id="hps" wire:model.lazy="hps" autofocus />
-                    <x-input-error class="mt-2" :messages="$errors->get('hps')" />
-                </div>
-                <div class="col-span-2">
-                    <x-input-label for="spesifikasi" :value="__('spesifikasi')" />
-                    <x-textarea id="spesifikasi" name="keterangan" wire:model="spesifikasi" autofocus placeholder="spefisikasi jasa/produk" />
-                    <x-input-error class="mt-2" :messages="$errors->get('spesifikasi')" />
-                </div>
-                <div class="col-span-2">
-                    <x-input-label for="jenis_ajuan" :value="__('jenis ajuan')" required />
-                    <x-radio-enum class="mt-1 block w-full" name="jenis_ajuan" enum="App\Enums\JenisAjuan" model="jenis_ajuan" wire:model.live="jenis_ajuan" />
-                    <x-input-error class="mt-2" :messages="$errors->get('jenis_ajuan')" />
-                </div>
-                @if ($rkapForm)
-                <div class="col-span-2">
-                    <x-input-label for="kategori" :value="__('kategori')" required />
-                    <livewire:utility.remote-select id="kategori" name="kategori" model="App\Models\Admin\KategoriPengajuan" label="nama_kategori" wire:model.lazy="kategori" />
-                    <x-input-error class="mt-2" :messages="$errors->get('kategori')" />
-                </div>
-                @endif
-                <div class="col-span-2">
-                    <x-input-label for="file_nota_dinas" :value="__('dokumen nota dinas (pdf)')" />
-                    <x-file-input class="mt-1 block w-full" id="file_nota_dinas" wire:model="file_nota_dinas" autofocus />
-                    <x-input-error class="mt-2" :messages="$errors->get('file_nota_dinas')" />
-                </div>
-                @if (!$rkapForm)
-                <div>
-                    <x-input-label for="file_rab" :value="__('dokumen rab (pdf)')" />
-                    <x-file-input class="mt-1 block w-full" id="file_rab" wire:model="file_rab" autofocus />
-                    <x-input-error class="mt-2" :messages="$errors->get('file_rab')" />
-                </div>
-                <div>
-                    <x-input-label for="file_analisa_kajian" :value="__('dokumen analisa (pdf)')" />
-                    <x-file-input class="mt-1 block w-full" id="file_analisa_kajian" wire:model="file_analisa_kajian" autofocus />
-                    <x-input-error class="mt-2" :messages="$errors->get('file_analisa_kajian')" />
-                </div>
-                @endif
-                <div>
-                    <x-input-label for="realisasi" :value="__('tanggal estimasi realisasi ke delivery')" />
-                    <x-text-input class="mt-1 block w-full" id="realisasi" type="date" wire:model="realisasi" />
-                    <x-input-error class="mt-2" :messages="$errors->get('realisasi')" />
-                </div>
-            </div>
-            <div class="mt-6 flex items-center gap-4">
-                <x-primary-button>@svg('heroicon-o-paper-airplane','w-5 h-5 mr-2'){{ __('Ajukan') }}</x-primary-button>
-                <x-action-message class="me-3" on="modal-stored">
-                {{ __('Pengajuan dikirim.') }}
-                </x-action-message>
-            </div>
-        </form>
-    </div>
+            </form>
+        </div>
+    </x-modal>
 </section>

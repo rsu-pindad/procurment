@@ -4,7 +4,8 @@ use Livewire\Volt\Component;
 use Illuminate\Validation\Rule;
 use App\Models\Admin\Unit;
 
-new class extends Component {
+new class extends Component
+{
     public string $nama_unit = '';
     public string $keterangan_unit = '';
 
@@ -38,8 +39,7 @@ new class extends Component {
 }; ?>
 
 <section>
-    <x-primary-button x-data=""
-        x-on:click.prevent="$dispatch('open-modal', 'open-create-unit')">{{ __('Tambah Unit') }}
+    <x-primary-button x-data="" x-on:click.prevent="$dispatch('open-modal', 'open-create-unit')">{{ __('Tambah Unit') }}
     </x-primary-button>
     <x-modal name="open-create-unit" :show="$errors->isNotEmpty()" focusable>
         <div class="p-4 space-y-4">
@@ -55,8 +55,7 @@ new class extends Component {
             <form class="space-y-6" wire:submit="storeUnit">
                 <div>
                     <x-input-label for="nama_unit" :value="__('nama unit')" />
-                    <x-text-input class="mt-1 block w-full" id="nama_unit" name="nama_unit" type="text"
-                        wire:model="nama_unit" required autofocus autocomplete="nama_unit" />
+                    <x-text-input class="mt-1 block w-full" id="nama_unit" name="nama_unit" type="text" wire:model="nama_unit" required autofocus autocomplete="nama_unit" />
                     <x-input-error class="mt-2" :messages="$errors->get('nama_unit')" />
                 </div>
                 <div>

@@ -2,83 +2,40 @@
 
 use Livewire\Volt\Component;
 
-new class extends Component {
+new class extends Component
+{
     public $selected = null;
 
-    public string $model; // e.g., App\Models\User
+    public string $model;
     public string $value = 'id';
     public string $label = 'name';
     public string $name = 'remoteSelect';
+    public bool $disabled = false;
 
-    public function mount($model, $value = 'id', $label = 'name', $name = 'remoteSelect', $selected = null)
+    public function mount($model, $value = 'id', $label = 'name', $name = 'remoteSelect', $selected = null, $disabled = false)
     {
         $this->model = $model;
         $this->value = $value;
         $this->label = $label;
         $this->name = $name;
         $this->selected = $selected;
+        $this->disabled = $disabled;
     }
 
     public function getSelectedProperty()
     {
         return $this->selected;
     }
-}; ?>
+
+    public function setSelected($value)
+    {
+        $this->selected = $value;
+    }
+};
+?>
 
 <div wire:ignore>
-    <x-customs.select-input-tom id="tomselect-{{ $name }}" name="{{ $name }}" wire:model="selected">
+    <x-customs.select-input-tom id="tomselect-{{ $name }}" name="{{ $name }}" wire:model="selected" data-selected="{{ $selected }}" data-model="{{ $model }}" data-value="{{ $value }}" data-label="{{ $label }}" :disabled="$disabled">
         <option value="">{{ __('pilih/cari data...') }}</option>
     </x-customs.select-input-tom>
 </div>
-
-@script
-    <script type="module">
-        document.addEventListener('livewire:navigated', () => {
-            function initTomSelect() {
-                const el = document.getElementById('tomselect-{{ $name }}');
-                if (!el) return;
-                // Hancurkan TomSelect sebelumnya jika sudah ada
-                if (el.tomselect) {
-                    el.tomselect.destroy();
-                }
-
-                new TomSelect(el, {
-                    valueField: '{{ $value }}',
-                    labelField: '{{ $label }}',
-                    searchField: '{{ $label }}',
-                    maxOptions: 20,
-                    plugins: ['virtual_scroll'],
-                    shouldLoad: function(query) {
-                        return true;
-                    },
-                    firstUrl: function(query) {
-                        return '/api/remote-select?model={{ urlencode($model) }}&value={{ $value }}&label={{ $label }}&q=' +
-                            encodeURIComponent(query);
-                    },
-                    load(query, callback) {
-                        fetch(`/api/remote-select?model={{ urlencode($model) }}&value={{ $value }}&label={{ $label }}&q=` +
-                                encodeURIComponent(query))
-                            .then(res => res.json())
-                            .then(callback)
-                            .catch(() => callback());
-                    },
-                    onFocus() {
-                        this.load('');
-                    },
-                    onChange(value) {
-                        Livewire.dispatch('setSelected{{ $name }}', {
-                            id: value
-                        });
-                    },
-                    onInitialize() {
-                        const defaultValue = "{{ $selected }}";
-                        if (defaultValue) {
-                            this.setValue(defaultValue, true);
-                        }
-                    }
-                });
-            }
-            initTomSelect();
-        });
-    </script>
-@endscript

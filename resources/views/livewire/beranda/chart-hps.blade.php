@@ -134,110 +134,13 @@ new class extends Component
     </div>
 </div>
 
-@script
-<script type="module">
-    let hpsChartInstance;
-    document.getElementById('export-chart-btn').addEventListener('click', () => {
-        setTimeout(() => {
-            const canvas = document.getElementById('hpsChart');
-            if (!canvas) {
-                console.warn("hps canvas belum ditemukan.");
-                return;
-            }
-            const base64Image = canvas.toDataURL('image/png');
-            Livewire.dispatch('exportHpsChartPdf', {
-                image: base64Image
-            });
-        }, 300);
-    });
-    async function renderHpsChart(labels, data) {
-        const delay = 300;
-        setTimeout(() => {
-            const canvas = document.getElementById('hpsChart');
-            if (!canvas) return;
-            const ctx = canvas.getContext('2d');
-            const chartData = {
-                labels: labels,
-                datasets: [{
-                        label: 'Total HPS',
-                        data: data.hps,
-                        backgroundColor: '#3b82f6',
-                        borderColor: '#2563eb',
-                        borderWidth: 1
-                    },
-                    {
-                        label: 'Total HPS Nego',
-                        data: data.hps_nego,
-                        backgroundColor: '#10b981',
-                        borderColor: '#059669',
-                        borderWidth: 1
-                    }
-                ]
-            };
-            const formatShortNumber = (value) => {
-                if (value >= 1_000_000_000) {
-                    return (value / 1_000_000_000).toFixed(1).replace(/\.0$/, '') + ' B';
-                }
-                if (value >= 1_000_000) {
-                    return (value / 1_000_000).toFixed(1).replace(/\.0$/, '') + ' M';
-                }
-                if (value >= 1_000) {
-                    return (value / 1_000).toFixed(0) + ' K';
-                }
-                return value.toLocaleString('id-ID');
-            };
-            const config = {
-                type: 'bar',
-                data: chartData,
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                // callback: value => 'Rp ' + value.toLocaleString('id-ID'),
-                                callback: function(value) {
-                                    return formatShortNumber(value);
-                                }
-                            }
-                        }
-                    },
-                    plugins: {
-                        datalabels: {
-                            anchor: 'end',
-                            align: 'top',
-                            color: '#333',
-                            font: {
-                                weight: 'bold'
-                            },
-                            // formatter: (value) => 'Rp ' + value.toLocaleString('id-ID')
-                            formatter: function(value) {
-                                return formatShortNumber(value);
-                            }
-                        }
-                    }
-                },
-                plugins: [ChartDataLabels]
-            };
-            if (hpsChartInstance) {
-                hpsChartInstance.data.labels = labels;
-                hpsChartInstance.data.datasets[0].data = data.hps;
-                hpsChartInstance.data.datasets[1].data = data.hps_nego;
-                hpsChartInstance.update();
-            } else {
-                hpsChartInstance = new Chart(ctx, config);
-            }
-        }, delay);
-    }
-    document.addEventListener('livewire:init', () => {
-        renderHpsChart(@json($this->hpsChartData['labels']), @json($this->hpsChartData['data']));
-    });
-    Livewire.on('refreshHpsChart', ({
-        labels,
-        data
-    }) => {
-        renderHpsChart(labels, data);
-    });
+@pushOnce('customScripts')
+<!-- Chart Area -->
+<script type="application/json" id="hpsChartLabels">
+    @json($this->hpsChartData['labels'])
 </script>
-@endscript
+
+<script type="application/json" id="hpsChartData">
+    @json($this->hpsChartData['data'])
+</script>
+@endpushOnce

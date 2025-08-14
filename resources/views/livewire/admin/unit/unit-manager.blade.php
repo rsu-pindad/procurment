@@ -27,7 +27,6 @@ new class extends Component {
         ];
     }
 
-    #[On('hapus')]
     public function destroy($rowId): void
     {
         $unit = Unit::find($rowId);
